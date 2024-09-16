@@ -40,6 +40,8 @@
       <input class="form-control" id="searchInput" type="text" placeholder="Search for a song..." onkeydown="handleKeydown(event)">
       <button class="btn btn-primary" onclick="searchSongs()">Search</button>
       <button class="btn btn-secondary" onclick="clearSearch()">Clear</button>
+	   <!-- New Button to Navigate to Another Page -->
+      <button class="btn btn-info" onclick="goToNewPage()">Go to Not loaded list</button>
     </div>
   </div>
 
@@ -2869,6 +2871,10 @@
       if (event.key === 'Enter') {
         searchSongs();
       }
+    }
+	// Navigate to a new page when the button is clicked
+    function goToNewPage() {
+      window.location.href = '/';  // Adjust the path to your new page
     }
 
     // Initial render (render first batch)
