@@ -1,2 +1,2 @@
 # Lukeireland88.github.io
-SH Karaoke Files
+This was developed using ChatGPT. I possess an extensive collection of songs for the karaoke machine, which has become too cumbersome to navigate using the page up/down function for guests to select their desired song. Additionally, printed songbooks are impractical due to their length and lack of a simple search feature for quickly locating a song that comes to mind. Consequently, this compact website enables everyone to peruse the song list on their own device, allowing them to scroll through the list or use the search bar at the top. Once they have found a sound they can simply use the number search on the karaoke machine to get going. 
