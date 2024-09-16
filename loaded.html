@@ -2898,7 +2898,7 @@
 	
 	   // Register the service worker if supported
    if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/shnotonkaraoke/sw.js')  // Adjust to your repo name
+  navigator.serviceWorker.register('/sw.js')  // Adjust to your repo name
     .then(reg => console.log('Service worker registered:', reg))
     .catch(err => console.log('Service worker registration failed:', err));
 }
