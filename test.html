@@ -156,6 +156,9 @@
       window.location.href = '/';  // Adjust the path to your new page
     }
 
+	  // Fetch the songs when the page loads
+    fetchSongs();
+	  
     // Initial render (render first batch)
     renderBatch(currentIndex, currentIndex + batchSize);
     currentIndex += batchSize;  // Update current index after initial load
