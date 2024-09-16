@@ -1,6 +1,6 @@
 {
-  "name": "SHKaraoke - Master File",
-  "short_name": "SH Karaoke List",
+  "name": "SHKaraoke",
+  "short_name": "SHKaraoke List",
   "description": "A searchable list of karaoke songs with lazy loading.",
   "start_url": "/",
   "display": "standalone",
