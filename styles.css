@@ -1,124 +1,175 @@
+:root {
+  --primary-color: #1e90ff; /* Dodger Blue */
+  --secondary-color: #0044cc; /* Darker Blue */
+  --background-color: #f0f8ff; /* Alice Blue */
+  --text-color: #222; /* Dark Text */
+  --light-gray: #f7fbff; /* Light Background for Rows */
+  --dark-gray: #d1ecf1; /* Border Color */
+  --hover-color: #00aaff; /* Lighter Blue for Hover */
+}
+
 /* General styling */
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #e6f7ff; /* Light blue background */
-    color: #333;
-    padding: 20px;
-    margin: 0;
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  padding: 20px;
+  margin: 0;
+  line-height: 1.6;
 }
 
 /* Heading styles */
 h1 {
-    font-size: 3rem;
-    font-weight: bold;
-    color: #1e90ff; /* Light blue color for heading */
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 30px;
+  font-size: 2.5rem; /* Adjusted */
+  font-weight: bold;
+  color: var(--secondary-color);
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+  margin-bottom: 30px;
+}
+
+/* Sticky Search Bar */
+.sticky-search {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 0px 0;
+  background-color: white; /* Added white background */
 }
 
 /* Search Bar */
 .search-bar {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-bottom: 20px;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
 }
 
 #searchInput {
-    flex: 1;
-    padding: 10px;
-    font-size: 1.2rem;
-    border: 2px solid #1e90ff;
-    border-radius: 5px;
+  flex: 2;
+  padding: 10px;
+  font-size: 1.2rem;
+  border: 2px solid var(--primary-color);
+  border-radius: 5px;
+  background-color: transparent; /* Keep transparent to match styling */
 }
 
+/* Button styles */
 button {
-    padding: 10px 20px;
-    font-size: 1.2rem;
-    border-radius: 5px;
-    background-color: #1e90ff;
-    color: white;
-    border: none;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+  flex: 1; /* Ensure all buttons take equal width */
+  padding: 8px 16px; /* Reduced padding for smaller buttons */
+  font-size: 0.9rem; /* Further reduced font size */
+  border-radius: 5px; /* Slightly smaller border radius */
+  color: white;
+  border: none;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  max-width: 60px; /* Set a max width to keep them compact */
+}
+
+button i {
+  font-size: 0.8rem; /* Adjust this value for smaller icon size */
+}
+
+/* Specific button styles */
+button.btn-primary {
+  background-color: var(--primary-color);
 }
 
 button.btn-primary:hover {
-    background-color: #00aaff; /* Hover effect with darker blue */
-    transform: scale(1.05);
+  background-color: var(--hover-color);
+  transform: scale(1.05);
 }
 
 button.btn-secondary {
-    background-color: #a4b0be;
+  background-color: #a4b0be;
 }
 
 button.btn-secondary:hover {
-    background-color: #7f8c8d;
-    transform: scale(1.05);
+  background-color: #7f8c8d;
+  transform: scale(1.05);
 }
 
 button.btn-info {
-    background-color: #54a0ff;
+  background-color: #54a0ff;
 }
 
 button.btn-info:hover {
-    background-color: #007bff;
-    transform: scale(1.05);
+  background-color: #007bff;
+  transform: scale(1.05);
+}
+
+button:active {
+  transform: scale(0.98);
 }
 
 /* Table Styling */
 .table {
-    background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    overflow: hidden; /* Ensures rounded corners */
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 20px;
 }
 
 .table thead th {
-    background-color: #1e90ff; /* Light blue for table header */
-    color: white;
-    text-align: center;
-    font-size: 1.2rem;
-    padding: 15px;
+  background-color: var(--primary-color);
+  color: white;
+  text-align: center;
+  font-size: 1.2rem;
+  padding: 15px;
+  border-bottom: 2px solid var(--dark-gray);
+  font-weight: bold; /* Enhanced */
+}
+
+.table tbody tr:nth-child(odd) {
+  background-color: var(--light-gray);
 }
 
 .table tbody tr:hover {
-    background-color: #f0f8ff; /* Light blue row hover effect */
-    cursor: pointer;
+  background-color: var(--hover-color);
+  cursor: pointer;
 }
 
 .table td, .table th {
-    padding: 15px;
-    font-size: 1.1rem;
-    text-align: center;
-    border-color: #d1ecf1;
+  padding: 15px;
+  font-size: 1.1rem;
+  text-align: center;
+  border-color: var(--dark-gray);
 }
 
 .table td:nth-child(2) {
-    text-align: left; /* Left-align the song names */
+  text-align: left;
 }
 
-/* Loading animation */
 .loading {
-    font-size: 1.5rem;
-    color: #1e90ff;
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  animation: pulse 1.5s infinite;
+  text-align: center;
+  margin-top: 20px; /* Add spacing above */
 }
 
-/* Button transitions for better interactivity */
-button {
-    transition: all 0.3s ease;
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
 }
 
 /* Mobile responsiveness */
 @media (max-width: 768px) {
-    h1 {
-        font-size: 2.5rem;
-    }
+  h1 {
+    font-size: 2.2rem; /* Adjusted for better responsiveness */
+  }
 
-    #searchInput, button {
-        font-size: 1rem;
-    }
+  #searchInput {
+    width: 100%; /* Full width on small screens */
+  }
 
-    table {
-        font-size: 0.9rem;
-    }
+  button {
+    width: 100%; /* Stack buttons vertically */
+  }
+
+  .table {
+    font-size: 0.9rem;
+  }
 }
