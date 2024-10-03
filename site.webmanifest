@@ -1,7 +1,7 @@
 {
   "name": "SHKaraoke",
-  "short_name": "SHKaraoke List",
-  "description": "A searchable list of karaoke songs with lazy loading.",
+  "short_name": "SHKaraoke",
+  "description": "A searchable list of karaoke songs.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
