@@ -15,12 +15,12 @@ body {
   color: var(--text-color);
   padding: 20px;
   margin: 0;
-  line-height: 1.6;
+  line-height: 1.8;
 }
 
 /* Heading styles */
 h1 {
-  font-size: 2.5rem; /* Adjusted */
+  font-size: 2.5rem;
   font-weight: bold;
   color: var(--secondary-color);
   text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
@@ -33,44 +33,44 @@ h1 {
   top: 0;
   z-index: 100;
   padding: 0px 0;
-  background-color: white; /* Added white background */
+  background-color: white;
 }
 
 /* Search Bar */
 .search-bar {
   display: flex;
-  gap: 15px;
+  gap: 10px;
   justify-content: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap; /* Ensure no wrapping */
   margin-bottom: 20px;
 }
 
 #searchInput {
-  flex: 2;
+  flex: 1; /* Leave enough space for buttons */
   padding: 10px;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   border: 2px solid var(--primary-color);
   border-radius: 5px;
-  background-color: transparent; /* Keep transparent to match styling */
+  background-color: transparent;
+  height: 45px;
+  min-width: 150px; /* Minimum width for small screens */
 }
 
-/* Button styles */
 button {
-  flex: 1; /* Ensure all buttons take equal width */
-  padding: 8px 16px; /* Reduced padding for smaller buttons */
-  font-size: 0.9rem; /* Further reduced font size */
-  border-radius: 5px; /* Slightly smaller border radius */
+  padding: 10px;
+  font-size: 1.1rem;
+  border-radius: 5px;
   color: white;
   border: none;
   transition: background-color 0.3s ease, transform 0.3s ease;
-  max-width: 60px; /* Set a max width to keep them compact */
+  height: 45px;
+  min-width: 80px; /* Ensure buttons don’t shrink too much */
 }
 
 button i {
-  font-size: 0.8rem; /* Adjust this value for smaller icon size */
+  font-size: 1rem;
 }
 
-/* Specific button styles */
 button.btn-primary {
   background-color: var(--primary-color);
 }
@@ -118,7 +118,7 @@ button:active {
   font-size: 1.2rem;
   padding: 15px;
   border-bottom: 2px solid var(--dark-gray);
-  font-weight: bold; /* Enhanced */
+  font-weight: bold;
 }
 
 .table tbody tr:nth-child(odd) {
@@ -127,6 +127,7 @@ button:active {
 
 .table tbody tr:hover {
   background-color: var(--hover-color);
+  color: white;
   cursor: pointer;
 }
 
@@ -141,12 +142,13 @@ button:active {
   text-align: left;
 }
 
+/* Loading Indicator */
 .loading {
   font-size: 1.5rem;
   color: var(--primary-color);
   animation: pulse 1.5s infinite;
   text-align: center;
-  margin-top: 20px; /* Add spacing above */
+  margin-top: 20px;
 }
 
 @keyframes pulse {
@@ -158,15 +160,21 @@ button:active {
 /* Mobile responsiveness */
 @media (max-width: 768px) {
   h1 {
-    font-size: 2.2rem; /* Adjusted for better responsiveness */
+    font-size: 2.2rem;
   }
 
   #searchInput {
-    width: 100%; /* Full width on small screens */
+    flex: 1; /* Make search input shrink appropriately */
+    width: auto;
+  }
+
+  .search-bar {
+    gap: 5px;
+    justify-content: space-between; /* Ensure horizontal alignment */
   }
 
   button {
-    width: 100%; /* Stack buttons vertically */
+    min-width: 80px; /* Prevent buttons from shrinking too much */
   }
 
   .table {

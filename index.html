@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Browse and search songs from our karaoke machine.">
   <title>Karaoke Songs</title>
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -14,45 +15,6 @@
   <link rel="stylesheet" href="styles.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  
-  <style>
-    body {
-      padding: 20px;
-    }
-    table {
-      margin-top: 20px;
-    }
-    .sticky-search {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background-color: white;
-      padding: 0px 0;
-    
-    }
-    .search-bar {
-      display: flex;
-      gap: 15px; /* Adjusted for better spacing */
-      flex-wrap: wrap; /* Makes it responsive */
-    }
-    .loading {
-      text-align: center;
-      margin-top: 20px;
-    }
-    /* Adjust the button height to match the other buttons */
-    #driveToggle {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px 20px; /* Matches the other buttons' padding */
-      height: auto; /* Automatically adjust height */
-      font-size: 0.9rem; /* Reduced font size */
-      border-radius: 5px; /* Slightly smaller border radius */
-      max-width: 150px; /* Set a max width to keep it compact */
-      background-color: #54a0ff; /* Match the info button color */
-      color: white; /* Ensure text is white */
-    }
-  </style>
 </head>
 <body>
 
@@ -61,22 +23,21 @@
   <!-- Sticky Search Input -->
   <div class="sticky-search">
     <div class="search-bar">
-      <input class="form-control" id="searchInput" type="text" placeholder="Search for a song..." onkeydown="handleKeydown(event)">
-      <button class="btn btn-primary" onclick="searchSongs()">
+      <input class="form-control" id="searchInput" type="text" placeholder="Search for a song..." aria-label="Search for a song" onkeydown="handleKeydown(event)">
+      <button class="btn btn-primary" aria-label="Search" onclick="searchSongs()">
         <i class="fas fa-search"></i>
       </button>
-      <button class="btn btn-secondary" onclick="clearSearch()">Clear</button>
 
-      <!-- Dropdown button for drive selection (only icon) -->
+      <!-- Buttons are always visible now, horizontally aligned on mobile -->
+      <button class="btn btn-secondary" aria-label="Clear Search" onclick="clearSearch()">Clear</button>
       <div class="dropdown">
-        <button class="btn btn-info dropdown-toggle" id="driveToggle" data-bs-toggle="dropdown" aria-expanded="false">
+        <button class="btn btn-info dropdown-toggle" aria-label="Select Drive" id="driveToggle" data-bs-toggle="dropdown" aria-expanded="false">
           <i class="fas fa-refresh"></i>
         </button>
         <ul class="dropdown-menu" aria-labelledby="driveToggle">
           <li><a class="dropdown-item" href="#" onclick="selectDrive('A')">Memory Card</a></li>
           <li><a class="dropdown-item" href="#" onclick="selectDrive('B')">Main Database</a></li>
-		  <li><a class="dropdown-item" href="#" onclick="selectDrive('C')">Elana Birthday</a></li>
-         
+          <li><a class="dropdown-item" href="#" onclick="selectDrive('C')">Elana Birthday</a></li>
         </ul>
       </div>
     </div>
@@ -85,8 +46,8 @@
   <table class="table table-bordered table-striped">
     <thead>
       <tr>
-        <th>#</th>
-        <th>Song Name</th>
+        <th scope="col">#</th>
+        <th scope="col">Song Name</th>
       </tr>
     </thead>
     <tbody id="songTable">
@@ -99,107 +60,6 @@
   <!-- Load the external song list script -->
   <script src="songs.js"></script>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const songTable = document.getElementById('songTable');
-      const loadingIndicator = document.getElementById('loading');
-      const batchSize = 1000;
-      let currentIndex = 0;
-      let loading = false;
-
-      function renderBatch(startIndex, endIndex) {
-        const fragment = document.createDocumentFragment();
-        const songsToRender = filteredSongs.slice(startIndex, endIndex);
-
-        songsToRender.forEach(song => {
-          const row = document.createElement('tr');
-          row.innerHTML = `<td>${song.number}</td><td>${song.name}</td>`;
-          fragment.appendChild(row);
-        });
-
-        songTable.appendChild(fragment);
-        loading = false;
-        loadingIndicator.style.display = 'none';
-      }
-
-      // Function to handle drive selection from the dropdown
-      let currentDrive = 'A';  // Default to Memory Card
-
-      window.selectDrive = function(drive) {
-        currentDrive = drive;
-        changeDrive();  // Call the existing changeDrive function to reload songs
-      }
-
-      window.changeDrive = function () {
-        const selectedDrive = currentDrive;
-        filteredSongs = songList[selectedDrive];
-        currentIndex = 0;
-        songTable.innerHTML = '';
-        renderBatch(currentIndex, currentIndex + batchSize);
-        currentIndex += batchSize;
-      };
-
-      function loadMoreSongs() {
-        if (loading) return;
-
-        // Calculate the total number of songs available
-        const totalSongs = filteredSongs.length;
-        
-        // Check if the current index is less than the total number of songs
-        if (currentIndex < totalSongs) {
-          if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
-            loading = true;
-            loadingIndicator.style.display = 'block';
-
-            setTimeout(() => {
-              const nextIndex = currentIndex + batchSize;
-
-              // If nextIndex exceeds totalSongs, adjust it
-              if (nextIndex > totalSongs) {
-                renderBatch(currentIndex, totalSongs); // Render up to the last available song
-              } else {
-                renderBatch(currentIndex, nextIndex);
-              }
-              
-              currentIndex = nextIndex; // Update currentIndex
-            }, 500);
-          }
-        } else {
-          // Hide loading indicator if there are no more songs to load
-          loadingIndicator.style.display = 'none';
-        }
-      }
-
-      window.searchSongs = function () {
-        const input = document.getElementById("searchInput").value.toLowerCase();
-        filteredSongs = songList[currentDrive].filter(song => song.name.toLowerCase().includes(input));
-        currentIndex = 0;
-        songTable.innerHTML = '';
-        renderBatch(currentIndex, currentIndex + batchSize);
-        currentIndex += batchSize;
-      };
-
-      window.clearSearch = function () {
-        document.getElementById("searchInput").value = '';
-        filteredSongs = songList[currentDrive];
-        currentIndex = 0;
-        songTable.innerHTML = '';
-        renderBatch(currentIndex, currentIndex + batchSize);
-        currentIndex += batchSize;
-      };
-
-      window.handleKeydown = function (event) {
-        if (event.key === 'Enter') {
-          searchSongs();
-        }
-      };
-
-      renderBatch(currentIndex, currentIndex + batchSize);
-      currentIndex += batchSize;
-
-      window.addEventListener('scroll', loadMoreSongs);
-    });
-  </script>
   <!-- Bootstrap JS for the dropdown functionality -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
