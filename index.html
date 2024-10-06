@@ -23,7 +23,7 @@
   <!-- Sticky Search Input -->
   <div class="sticky-search">
     <div class="search-bar">
-      <input class="form-control" id="searchInput" type="text" placeholder="Search for a song..." aria-label="Search for a song" onkeydown="handleKeydown(event)">
+      <input class="form-control" id="searchInput" type="text" placeholder="Search for a song..." aria-label="Search for a song" oninput="searchSongs()">
       <button class="btn btn-primary" aria-label="Search" onclick="searchSongs()">
         <i class="fas fa-search"></i>
       </button>
