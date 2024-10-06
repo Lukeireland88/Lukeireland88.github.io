@@ -32,9 +32,9 @@ h1 {
   position: sticky;
   top: 0;
   z-index: 1000; /* Ensure it stays above everything, including the phone's UI */
-  padding: 10px 0; /* Some padding to give breathing room */
+  padding: 25px 0 0 0; /* Some padding to give breathing room */
   background-color: white;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional shadow for better visibility */
+ 
 }
 
 /* Search Bar */
