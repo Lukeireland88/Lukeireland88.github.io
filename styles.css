@@ -22,7 +22,7 @@ body {
 h1 {
   font-size: 2.5rem;
   font-weight: bold;
-  color: var(--secondary-color);
+  color: blue;
   text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
   margin-bottom: 30px;
 }
