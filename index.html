@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -59,23 +60,6 @@
 
   <!-- Load the external song list script -->
   <script src="songs.js"></script>
-
-  <!-- JavaScript to switch themes based on selected drive -->
-  <script>
-    function selectDrive(drive) {
-      // Remove existing theme classes
-      document.documentElement.classList.remove('memory-card-scheme', 'main-db-scheme', 'elana-birthday-scheme');
-      
-      // Apply the appropriate color scheme
-      if (drive === 'A') {
-        document.documentElement.classList.add('memory-card-scheme');
-      } else if (drive === 'B') {
-        document.documentElement.classList.add('main-db-scheme');
-      } else if (drive === 'C') {
-        document.documentElement.classList.add('elana-birthday-scheme');
-      }
-    }
-  </script>
 
   <!-- Bootstrap JS for the dropdown functionality -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

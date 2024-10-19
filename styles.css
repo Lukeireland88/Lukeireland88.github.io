@@ -1,4 +1,4 @@
-/* Default Scheme */
+
 :root {
   --primary-color: #1e90ff; /* Dodger Blue */
   --secondary-color: #0044cc; /* Darker Blue */
@@ -7,31 +7,6 @@
   --light-gray: #f7fbff; /* Light Background for Rows */
   --dark-gray: #d1ecf1; /* Border Color */
   --hover-color: #00aaff; /* Lighter Blue for Hover */
-}
-
-/* Memory Card Color Scheme */
-.memory-card-scheme {
-  --primary-color: #ff6347; /* Tomato */
-  --secondary-color: #e55342; /* Darker Red */
-  --background-color: #fff5ee; /* Seashell */
-  --text-color: #222; 
-  --hover-color: #ff8562; /* Lighter Tomato */
-}
-
-/* Main DB Color Scheme */
-.main-db-scheme {
-  --primary-color: #32cd32; /* Lime Green */
-  --secondary-color: #228b22; /* Forest Green */
-  --background-color: #f5fff5; /* Light Green */
-  --hover-color: #43e043; /* Lighter Lime */
-}
-
-/* Elana Birthday Color Scheme */
-.elana-birthday-scheme {
-  --primary-color: #9370db; /* Medium Purple */
-  --secondary-color: #6a5acd; /* Slate Blue */
-  --background-color: #f8f0ff; /* Lavender */
-  --hover-color: #ab82ff; /* Light Purple */
 }
 
 /* General styling */
@@ -57,9 +32,10 @@ h1 {
 .sticky-search {
   position: sticky;
   top: 0;
-  z-index: 1000;
-  padding: 25px 0 0 0;
+  z-index: 1000; /* Ensure it stays above everything, including the phone's UI */
+  padding: 25px 0 0 0; /* Some padding to give breathing room */
   background-color: white;
+ 
 }
 
 /* Search Bar */
@@ -67,19 +43,19 @@ h1 {
   display: flex;
   gap: 10px;
   justify-content: center;
-  flex-wrap: nowrap;
+  flex-wrap: nowrap; /* Ensure no wrapping */
   margin-bottom: 20px;
 }
 
 #searchInput {
-  flex: 1;
+  flex: 1; /* Leave enough space for buttons */
   padding: 10px;
   font-size: 1.1rem;
   border: 2px solid var(--primary-color);
   border-radius: 5px;
   background-color: transparent;
   height: 45px;
-  min-width: 160px;
+  min-width: 160px; /* Minimum width for small screens */
 }
 
 button {
@@ -90,7 +66,7 @@ button {
   border: none;
   transition: background-color 0.3s ease, transform 0.3s ease;
   height: 45px;
-  min-width: 20px;
+  min-width: 20px; /* Ensure buttons don’t shrink too much */
 }
 
 button i {
@@ -190,17 +166,17 @@ button:active {
   }
 
   #searchInput {
-    flex: 1;
+    flex: 1; /* Make search input shrink appropriately */
     width: auto;
   }
 
   .search-bar {
     gap: 5px;
-    justify-content: space-between;
+    justify-content: space-between; /* Ensure horizontal alignment */
   }
 
   button {
-    min-width: 60px;
+    min-width: 60px; /* Prevent buttons from shrinking too much */
   }
 
   .table {
