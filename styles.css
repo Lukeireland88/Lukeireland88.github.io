@@ -201,4 +201,5 @@ h1 {
   -webkit-text-fill-color: transparent; /* Fix for some webkit browsers */
   text-shadow: none; /* Disable the shadow for better gradient clarity */
   margin-bottom: 30px;
+  padding:10px;
 }
