@@ -191,3 +191,14 @@ button.btn-info i.fas.fa-refresh {
 button.btn-info.dropdown-toggle::after {
   color: white;
 }
+
+h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  background: linear-gradient(248deg, #0c33ff 0%, #d800ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent; /* Fix for some webkit browsers */
+  text-shadow: none; /* Disable the shadow for better gradient clarity */
+  margin-bottom: 30px;
+}
