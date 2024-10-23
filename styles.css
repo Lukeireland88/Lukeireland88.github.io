@@ -195,7 +195,7 @@ button.btn-info.dropdown-toggle::after {
 h1 {
   font-size: 3rem;
   font-weight: bold;
-  background: linear-gradient(248deg, #0c33ff 0%, #d800ff 100%);
+  background: linear-gradient(90deg, #2891FC 0%, #d800ff 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent; /* Fix for some webkit browsers */
