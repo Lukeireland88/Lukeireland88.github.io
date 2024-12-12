@@ -38,9 +38,12 @@
       </button>
 
       <!-- Buttons are always visible now, horizontally aligned on mobile -->
-	  <button class="btn btn-primary" id="openQueueModal">List</button>
+	
+
       <button class="btn btn-secondary" aria-label="Clear Search" onclick="clearSearch()">Clear</button>
-	  
+	    <button class="btn btn-primary" id="openQueueModal">
+  <i class="fas fa-list"></i> <!-- List icon from Font Awesome -->
+</button>
       <div class="dropdown">
         <button class="btn btn-info dropdown-toggle" aria-label="Select Drive" id="driveToggle" data-bs-toggle="dropdown" aria-expanded="false">
           <i class="fas fa-refresh"></i>
@@ -59,7 +62,7 @@
     <tr>
       <th scope="col">#</th>
       <th scope="col">Song Name</th>
-      <th scope="col" style="background-color: var(--primary-color); color: white;">Action</th>
+      <th scope="col" style="background-color: var(--primary-color); color: white;">List</th>
     </tr>
   </thead>
   <tbody id="songTable">
