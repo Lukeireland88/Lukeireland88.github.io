@@ -242,10 +242,9 @@ h1 {
 }
 
 .table th {
-  width: auto; /* You can adjust this width to fit your content */
+  width: 50px; /* You can adjust this width to fit your content */
 }
 
 .table td {
-  max-width: auto; /* Adjust the max-width accordingly */
+  max-width: 60px; /* Adjust the max-width accordingly */
 }
-
