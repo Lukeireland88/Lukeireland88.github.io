@@ -53,7 +53,7 @@ h1 {
   border-radius: 5px;
   background-color: transparent;
   height: 45px;
-  min-width: 160px; /* Minimum width for small screens */
+  min-width: 60px; /* Minimum width for small screens */
 }
 
 button {
