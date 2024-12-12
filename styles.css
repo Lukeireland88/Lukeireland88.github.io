@@ -237,3 +237,11 @@ h1 {
 .table tbody td button i {
   font-size: 1rem;             /* Adjust icon size */
 }
+
+.table th {
+  width: 100px; /* You can adjust this width to fit your content */
+}
+
+.table td {
+  max-width: 200px; /* Adjust the max-width accordingly */
+}
