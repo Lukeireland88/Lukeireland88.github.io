@@ -102,6 +102,9 @@ button:active {
   transform: scale(0.98);
 }
 
+table {
+    table-layout: auto;
+}
 /* Table Styling */
 .table {
   background-color: #fff;
