@@ -203,3 +203,37 @@ h1 {
   margin-bottom: 30px;
   padding:10px;
 }
+
+#queueTable {
+  margin-top: 20px;
+}
+
+#queueTable .btn-sm {
+  font-size: 0.9rem;
+  padding: 5px 10px;
+}
+
+.table thead th:nth-child(3) {
+  background-color: var(--primary-color); /* Blue background */
+  color: white;                           /* White text */
+  text-align: center;                     /* Center align text for clarity */
+}
+
+.table tbody td button {
+  display: flex;                /* Flexbox for centering icon */
+  justify-content: center;      /* Center the icon */
+  align-items: center;          /* Align icon vertically */
+  padding: 5px 10px;            /* Adjust padding for a compact look */
+  background-color: var(--primary-color); /* Blue background */
+  color: white;                 /* White icon */
+  border: none;                 /* Remove borders */
+  transition: background-color 0.3s ease;
+}
+
+.table tbody td button:hover {
+  background-color: var(--hover-color);   /* Lighter blue on hover */
+}
+
+.table tbody td button i {
+  font-size: 1rem;             /* Adjust icon size */
+}
