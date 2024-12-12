@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,11 +16,6 @@
   <link rel="stylesheet" href="styles.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  
-
-
-
-  
 </head>
 <body>
 
@@ -33,14 +27,18 @@
   <div class="sticky-search">
     <div class="search-bar">
       <input class="form-control" id="searchInput" type="text" placeholder="Search for a song..." aria-label="Search for a song" oninput="searchSongs()">
-      <button class="btn btn-primary" aria-label="Search" onclick="searchSongs()">
+      
+	  <button class="btn btn-secondary" aria-label="Clear Search" onclick="clearSearch()">
+        <i class="fas fa-times"></i>
+      </button>
+	  <button class="btn btn-primary" aria-label="Search" onclick="searchSongs()">
         <i class="fas fa-search"></i>
       </button>
 
       <!-- Buttons are always visible now, horizontally aligned on mobile -->
 	
 
-      <button class="btn btn-secondary" aria-label="Clear Search" onclick="clearSearch()">Clear</button>
+      
 	    <button class="btn btn-primary" id="openQueueModal">
   <i class="fas fa-list"></i> <!-- List icon from Font Awesome -->
 </button>
@@ -71,12 +69,7 @@
     </tbody>
   </table>
 
-  
-
   <div class="loading" id="loading" style="display: none;">Loading more songs...</div>
-
-
-
 
 <!-- Modal Example -->
 <div class="modal fade" id="queueModal" tabindex="-1" aria-labelledby="queueModalLabel" aria-hidden="true">
@@ -103,8 +96,6 @@
     </div>
   </div>
 </div>
-
-
 
   <!-- Load the external song list script -->
   <script src="songs.js"></script>
