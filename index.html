@@ -28,7 +28,7 @@
   <h1 class="text-center">
   <i class="fas fa-microphone-alt"></i> Karaoke SongBook <i class="fas fa-microphone-alt"></i>
 </h1>
-<button class="btn btn-primary" id="openQueueModal">View Queue</button>
+
   <!-- Sticky Search Input -->
   <div class="sticky-search">
     <div class="search-bar">
@@ -38,7 +38,9 @@
       </button>
 
       <!-- Buttons are always visible now, horizontally aligned on mobile -->
+	  <button class="btn btn-primary" id="openQueueModal">List</button>
       <button class="btn btn-secondary" aria-label="Clear Search" onclick="clearSearch()">Clear</button>
+	  
       <div class="dropdown">
         <button class="btn btn-info dropdown-toggle" aria-label="Select Drive" id="driveToggle" data-bs-toggle="dropdown" aria-expanded="false">
           <i class="fas fa-refresh"></i>
@@ -76,7 +78,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header" style="background-color: var(--primary-color); color: white;">
-        <h5 class="modal-title" id="queueModalLabel">Queue</h5>
+        <h5 class="modal-title" id="queueModalLabel">Your List</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
