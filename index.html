@@ -27,21 +27,17 @@
   <div class="sticky-search">
     <div class="search-bar">
       <input class="form-control" id="searchInput" type="text" placeholder="Search for a song..." aria-label="Search for a song" oninput="searchSongs()">
-      
-	  <button class="btn btn-secondary" aria-label="Clear Search" onclick="clearSearch()">
+       <button class="btn btn-secondary" aria-label="Clear Search" onclick="clearSearch()">
         <i class="fas fa-times"></i>
       </button>
 	  <button class="btn btn-primary" aria-label="Search" onclick="searchSongs()">
         <i class="fas fa-search"></i>
       </button>
 
-      <!-- Buttons are always visible now, horizontally aligned on mobile -->
-	
+      <button class="btn btn-primary" id="openQueueModal">
+        <i class="fas fa-list"></i> <!-- List icon from Font Awesome -->
+      </button>
 
-      
-	    <button class="btn btn-primary" id="openQueueModal">
-  <i class="fas fa-list"></i> <!-- List icon from Font Awesome -->
-</button>
       <div class="dropdown">
         <button class="btn btn-info dropdown-toggle" aria-label="Select Drive" id="driveToggle" data-bs-toggle="dropdown" aria-expanded="false">
           <i class="fas fa-refresh"></i>
@@ -55,7 +51,6 @@
     </div>
   </div>
 
-
   <table class="table table-bordered table-striped">
     <thead>
       <tr>
@@ -64,43 +59,58 @@
         <th scope="col" style="background-color: var(--primary-color); color: white; width: auto;">List</th>
       </tr>
     </thead>
-    <tbody id="songTable">
-      <!-- The song list will be populated here -->
+    <tbody id="songTable" aria-live="polite">
+      <!-- The song list will be dynamically populated here -->
     </tbody>
   </table>
 
-  <div class="loading" id="loading" style="display: none;">Loading more songs...</div>
+  <div class="loading" id="loading" style="display: none;" aria-live="polite">Loading more songs...</div>
 
-<!-- Modal Example -->
-<div class="modal fade" id="queueModal" tabindex="-1" aria-labelledby="queueModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header" style="background-color: var(--primary-color); color: white;">
-        <h5 class="modal-title" id="queueModalLabel">Your List</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <table class="table table-bordered table-striped" id="queueTable">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Song Name</th>
-              <th scope="col">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Queue items will be dynamically added here -->
-          </tbody>
-        </table>
+  <!-- Modal Example -->
+  <div class="modal fade" id="queueModal" tabindex="-1" aria-labelledby="queueModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header" style="background-color: var(--primary-color); color: white;">
+          <h5 class="modal-title" id="queueModalLabel">Your List</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <table class="table table-bordered table-striped" id="queueTable">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Song Name</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Queue items will be dynamically added here -->
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-  <!-- Load the external song list script -->
-  <script src="songs.js"></script>
+  <!-- External Scripts -->
+  <script>
+    function searchSongs() {
+      // Implement search functionality here
+    }
 
-  <!-- Bootstrap JS for the dropdown functionality -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    function clearSearch() {
+      document.getElementById('searchInput').value = '';
+      searchSongs(); // Refresh the results after clearing
+    }
+
+    function selectDrive(drive) {
+      console.log(`Drive ${drive} selected`);
+      // Implement drive selection logic here
+    }
+  </script>
+
+  <!-- Load scripts with defer for non-blocking loading -->
+  <script src="songs.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
 </body>
 </html>
