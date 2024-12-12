@@ -241,4 +241,10 @@ h1 {
   font-size: 1rem;             /* Adjust icon size */
 }
 
+.table th {
+  width: 10px; /* You can adjust this width to fit your content */
+}
 
+.table td {
+  max-width: 60px; /* Adjust the max-width accordingly */
+}
