@@ -1,250 +1,94 @@
 :root {
-  --primary-color: #1e90ff; /* Dodger Blue */
-  --secondary-color: #0044cc; /* Darker Blue */
-  --background-color: #f0f8ff; /* Alice Blue */
-  --text-color: #222; /* Dark Text */
-  --light-gray: #f7fbff; /* Light Background for Rows */
-  --dark-gray: #d1ecf1; /* Border Color */
-  --hover-color: #00aaff; /* Lighter Blue for Hover */
+  --primary-color: #1e90ff;
+  --secondary-color: #0044cc;
+  --background-color: #f0f8ff;
+  --text-color: #222;
+  --light-gray: #f7fbff;
+  --dark-gray: #d1ecf1;
+  --hover-color: #00aaff;
 }
 
-/* General styling */
 body {
   font-family: 'Roboto', sans-serif;
   background-color: var(--background-color);
   color: var(--text-color);
-  padding: 20px;
+  padding: 10px;
   margin: 0;
-  line-height: 1.8;
+  line-height: 1.6;
 }
 
-/* Heading styles */
 h1 {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: blue;
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
-  margin-bottom: 30px;
-}
-
-/* Sticky Search Bar */
-.sticky-search {
-  position: sticky;
-  top: 0;
-  z-index: 1000; /* Ensure it stays above everything, including the phone's UI */
-  padding: 25px 0 0 0; /* Some padding to give breathing room */
-  background-color: white;
-}
-
-/* Search Bar */
-.search-bar {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  flex-wrap: nowrap; /* Ensure no wrapping */
+  font-size: 2rem;
+  padding: 5px;
+  background: linear-gradient(90deg, #2891FC 0%, #d800ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
   margin-bottom: 20px;
 }
 
-#searchInput {
-  flex: 1; /* Leave enough space for buttons */
-  padding: 10px;
-  font-size: 1.1rem;
-  border: 2px solid var(--primary-color);
-  border-radius: 5px;
-  background-color: transparent;
-  height: 45px;
-  min-width: 60px; /* Minimum width for small screens */
+.sticky-search {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 15px;
+  background-color: white;
+  border-bottom: 2px solid var(--dark-gray);
+}
+
+.search-bar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+.input-group .form-control {
+  flex: 1;
+}
+
+.input-group .btn-secondary {
+  flex-shrink: 0;
 }
 
 button {
-  padding: 10px;
-  font-size: 1.1rem;
-  border-radius: 5px;
-  color: white;
-  border: none;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-  height: 45px;
-  min-width: 20px; /* Ensure buttons don’t shrink too much */
-}
-
-button i {
-  font-size: 1rem;
-}
-
-button.btn-primary {
-  background-color: var(--primary-color);
-}
-
-button.btn-primary:hover {
-  background-color: var(--hover-color);
-  transform: scale(1.05);
+  min-width: 40px;
+  flex-shrink: 1;
+  padding: 5px;
 }
 
 button.btn-secondary {
-  background-color: #a4b0be;
+  background-color: #f8d7da;
+  color: #721c24;
+  border-color: #f5c6cb;
 }
 
 button.btn-secondary:hover {
-  background-color: #7f8c8d;
-  transform: scale(1.05);
+  background-color: #f1b0b7;
+  color: #721c24;
+  border-color: #f1b0b7;
 }
 
-button.btn-info {
-  background-color: #54a0ff;
-}
-
-button.btn-info:hover {
-  background-color: #007bff;
-  transform: scale(1.05);
-}
-
-button:active {
-  transform: scale(0.98);
-}
-
-table {
-    table-layout: auto;
-}
-/* Table Styling */
 .table {
-  background-color: #fff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-  overflow: hidden;
-  margin-top: 20px;
+  font-size: 0.9rem;
+  word-wrap: break-word;
 }
 
 .table thead th {
   background-color: var(--primary-color);
   color: white;
-  text-align: center;
-  font-size: 1.2rem;
-  padding: 15px;
-  border-bottom: 2px solid var(--dark-gray);
-  font-weight: bold;
 }
 
-.table tbody tr:nth-child(odd) {
-  background-color: var(--light-gray);
-}
-
-.table tbody tr:hover {
-  background-color: var(--hover-color);
-  color: white;
-  cursor: pointer;
-}
-
-.table td, .table th {
-  padding: 15px;
-  font-size: 1.1rem;
-  text-align: center;
-  border-color: var(--dark-gray);
-}
-
-.table td:nth-child(2) {
-  text-align: left;
-}
-
-/* Loading Indicator */
-.loading {
-  font-size: 1.5rem;
-  color: var(--primary-color);
-  animation: pulse 1.5s infinite;
-  text-align: center;
-  margin-top: 20px;
-}
-
-@keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.5; }
-  100% { opacity: 1; }
-}
-
-/* Mobile responsiveness */
-@media (max-width: 560px) {
+@media (max-width: 480px) {
   h1 {
-    font-size: 2.2rem;
-  }
-
-  #searchInput {
-    flex: 1; /* Make search input shrink appropriately */
-    width: auto;
+    font-size: 1.8rem;
   }
 
   .search-bar {
     gap: 5px;
-    justify-content: space-between; /* Ensure horizontal alignment */
   }
 
   button {
-    min-width: 60px; /* Prevent buttons from shrinking too much */
+    font-size: 0.8rem;
   }
-
-  .table {
-    font-size: 0.9rem;
-  }
-}
-
-/* Make the refresh icon white */
-button.btn-info i.fas.fa-refresh {
-  color: white;
-}
-
-/* Make the dropdown arrow white */
-button.btn-info.dropdown-toggle::after {
-  color: white;
-}
-
-h1 {
-  font-size: 3rem;
-  font-weight: bold;
-  background: linear-gradient(90deg, #2891FC 0%, #d800ff 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent; /* Fix for some webkit browsers */
-  text-shadow: none; /* Disable the shadow for better gradient clarity */
-  margin-bottom: 30px;
-  padding:10px;
-}
-
-#queueTable {
-  margin-top: 20px;
-}
-
-#queueTable .btn-sm {
-  font-size: 0.9rem;
-  padding: 5px 10px;
-}
-
-.table thead th:nth-child(3) {
-  background-color: var(--primary-color); /* Blue background */
-  color: white;                           /* White text */
-  text-align: center;                     /* Center align text for clarity */
-}
-
-.table tbody td button {
-  display: flex;                /* Flexbox for centering icon */
-  justify-content: center;      /* Center the icon */
-  align-items: center;          /* Align icon vertically */
-  padding: 5px 10px;            /* Adjust padding for a compact look */
-  background-color: var(--primary-color); /* Blue background */
-  color: white;                 /* White icon */
-  border: none;                 /* Remove borders */
-  transition: background-color 0.3s ease;
-}
-
-.table tbody td button:hover {
-  background-color: var(--hover-color);   /* Lighter blue on hover */
-}
-
-.table tbody td button i {
-  font-size: 1rem;             /* Adjust icon size */
-}
-
-.table th {
-  width: 10px; /* You can adjust this width to fit your content */
-}
-
-.table td {
-  max-width: 60px; /* Adjust the max-width accordingly */
 }
