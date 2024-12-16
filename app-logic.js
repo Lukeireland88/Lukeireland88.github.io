@@ -1,5 +1,3 @@
-
-
 // Cache to store filtered song lists per drive
 let cache = {};
 
@@ -12,29 +10,31 @@ document.addEventListener('DOMContentLoaded', function () {
   let filteredSongs = songList['A'];
   let currentDrive = 'A';
 
-function renderBatch(startIndex, endIndex) {
-  const fragment = document.createDocumentFragment();
-  const songsToRender = filteredSongs.slice(startIndex, endIndex);
+  function renderBatch(startIndex, endIndex) {
+    const fragment = document.createDocumentFragment();
+    const songsToRender = filteredSongs.slice(startIndex, endIndex);
 
-  songsToRender.forEach(song => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>${song.number}</td>
-      <td>${song.name}</td>
-      <td class="text-center">
-        <button class="btn btn-success btn-sm" onclick="addToQueue('${song.number}', '${song.name.replace(/'/g, "\\'")}')">
-          <i class="fas fa-plus"></i> <!-- Font Awesome + icon -->
-        </button>
-      </td>
-    `;
-    fragment.appendChild(row);
-  });
+    songsToRender.forEach(song => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${song.number}</td>
+        <td>${song.name}</td>
+        <td class="text-center">
+          <button class="btn btn-success btn-sm" id="addButton-${song.number}" onclick="addToQueue('${song.number}', '${song.name.replace(/'/g, "\\'")}')">
+            <i class="fas fa-plus"></i> <!-- Font Awesome + icon -->
+          </button>
+        </td>
+      `;
+      fragment.appendChild(row);
+    });
 
-  songTable.appendChild(fragment);
-  loading = false;
-  loadingIndicator.style.display = 'none';
-}
+    songTable.appendChild(fragment);
+    loading = false;
+    loadingIndicator.style.display = 'none';
 
+    // Check if any song is already in the queue and update the button state
+    updateAddButtonsState();
+  }
 
   // Function to handle drive selection from the dropdown
   window.selectDrive = function (drive) {
@@ -79,65 +79,23 @@ function renderBatch(startIndex, endIndex) {
     }
   }
 
- window.searchSongs = function () {
-  const input = document.getElementById('searchInput').value.trim().toLowerCase();
-  const songTable = document.getElementById('songTable');
-  songTable.innerHTML = ''; // Clear the table
+  window.searchSongs = function () {
+    const input = document.getElementById('searchInput').value.trim().toLowerCase();
+    const songTable = document.getElementById('songTable');
+    songTable.innerHTML = ''; // Clear the table
 
-  if (input.length === 1 && /^[a-z]$/.test(input)) {
-    // Filter by first letter
-    filteredSongs = songList[currentDrive].filter(song => song.name.toLowerCase().startsWith(input));
-  } else {
-    // General search
-    filteredSongs = songList[currentDrive].filter(song => song.name.toLowerCase().includes(input));
-  }
-
-  currentIndex = 0;
-  renderBatch(currentIndex, currentIndex + batchSize);
-  currentIndex += batchSize;
-};
-
-  
-  function searchSongs() {
-    const input = document.getElementById('searchInput').value.toLowerCase();
-    const table = document.getElementById('songTable');
-    const rows = table.getElementsByTagName('tr');
-
-    for (let i = 0; i < rows.length; i++) {
-        let songName = rows[i].getElementsByTagName('td')[1]; // Assuming 2nd column is song name
-        if (songName) {
-            let textValue = songName.textContent || songName.innerText;
-            if (textValue.toLowerCase().indexOf(input) > -1) {
-                rows[i].style.display = ""; // Show the row if it matches
-            } else {
-                rows[i].style.display = "none"; // Hide the row if it doesn't match
-            }
-        }
+    if (input.length === 1 && /^[a-z]$/.test(input)) {
+      // Filter by first letter
+      filteredSongs = songList[currentDrive].filter(song => song.name.toLowerCase().startsWith(input));
+    } else {
+      // General search
+      filteredSongs = songList[currentDrive].filter(song => song.name.toLowerCase().includes(input));
     }
-}
 
-let debounceTimeout;
-function searchSongs() {
-    clearTimeout(debounceTimeout);
-    debounceTimeout = setTimeout(() => {
-        const input = document.getElementById('searchInput').value.toLowerCase();
-        const table = document.getElementById('songTable');
-        const rows = table.getElementsByTagName('tr');
-
-        for (let i = 0; i < rows.length; i++) {
-            let songName = rows[i].getElementsByTagName('td')[1];
-            if (songName) {
-                let textValue = songName.textContent || songName.innerText;
-                if (textValue.toLowerCase().indexOf(input) > -1) {
-                    rows[i].style.display = "";
-                } else {
-                    rows[i].style.display = "none";
-                }
-            }
-        }
-    }, 300); // 300ms delay to avoid excessive searches
-}
-
+    currentIndex = 0;
+    renderBatch(currentIndex, currentIndex + batchSize);
+    currentIndex += batchSize;
+  };
 
   window.clearSearch = function () {
     document.getElementById("searchInput").value = '';
@@ -166,13 +124,20 @@ let queue = []; // Holds the list of queued songs
 function addToQueue(number, name) {
   // Prevent duplicates
   if (queue.some(song => song.number === number)) {
-    alert('This song is already in the queue!');
-    return;
+    return; // Do nothing if the song is already in the queue
   }
 
   // Add the song to the queue
   queue.push({ number, name });
   renderQueue();
+
+  // Disable the "Add" button for the song in the table
+  const addButton = document.querySelector(`#addButton-${number}`);
+  if (addButton) {
+    addButton.disabled = true;
+    addButton.classList.add('btn-secondary'); // Change to a grayed-out style
+    addButton.classList.remove('btn-success'); // Ensure it’s no longer green
+  }
 }
 
 // Render the queue to the table
@@ -196,11 +161,19 @@ function renderQueue() {
   localStorage.setItem('karaokeQueue', JSON.stringify(queue));
 }
 
-
 // Remove a song from the queue
 function removeFromQueue(index) {
+  const song = queue[index];
   queue.splice(index, 1); // Remove the song by index
   renderQueue();
+
+  // Re-enable the "Add" button for the song that was removed
+  const addButton = document.querySelector(`#addButton-${song.number}`);
+  if (addButton) {
+    addButton.disabled = false;
+    addButton.classList.remove('btn-secondary');
+    addButton.classList.add('btn-success');
+  }
 }
 
 // Load the queue from localStorage on page load
@@ -210,7 +183,22 @@ document.addEventListener('DOMContentLoaded', () => {
     queue = savedQueue;
     renderQueue();
   }
+
+  // After loading the queue, update the "Add" buttons to match the current state
+  updateAddButtonsState();
 });
+
+// Function to update the state of "Add" buttons based on the queue
+function updateAddButtonsState() {
+  queue.forEach(song => {
+    const addButton = document.querySelector(`#addButton-${song.number}`);
+    if (addButton) {
+      addButton.disabled = true;
+      addButton.classList.add('btn-secondary');
+      addButton.classList.remove('btn-success');
+    }
+  });
+}
 
 function shareQueue(method) {
   const queue = JSON.parse(localStorage.getItem('karaokeQueue')) || [];
@@ -230,8 +218,6 @@ function shareQueue(method) {
     window.location.href = emailLink;
   }
 }
-
-
 
 function clearQueue() {
   queue = [];
