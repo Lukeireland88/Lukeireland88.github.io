@@ -10,32 +10,6 @@ document.addEventListener('DOMContentLoaded', function () {
   let filteredSongs = songList['A'];
   let currentDrive = 'A';
 
-  function renderBatch(startIndex, endIndex) {
-    const fragment = document.createDocumentFragment();
-    const songsToRender = filteredSongs.slice(startIndex, endIndex);
-
-    songsToRender.forEach(song => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${song.number}</td>
-        <td>${song.name}</td>
-        <td class="text-center">
-          <button class="btn btn-success btn-sm" id="addButton-${song.number}" onclick="addToQueue('${song.number}', '${song.name.replace(/'/g, "\\'")}')">
-            <i class="fas fa-plus"></i> <!-- Font Awesome + icon -->
-          </button>
-        </td>
-      `;
-      fragment.appendChild(row);
-    });
-
-    songTable.appendChild(fragment);
-    loading = false;
-    loadingIndicator.style.display = 'none';
-
-    // Check if any song is already in the queue and update the button state
-    updateAddButtonsState();
-  }
-
   // Function to handle drive selection from the dropdown
   window.selectDrive = function (drive) {
     currentDrive = drive;
@@ -54,6 +28,29 @@ document.addEventListener('DOMContentLoaded', function () {
     renderBatch(currentIndex, currentIndex + batchSize);
     currentIndex += batchSize;
   };
+
+  function renderBatch(startIndex, endIndex) {
+    const fragment = document.createDocumentFragment();
+    const songsToRender = filteredSongs.slice(startIndex, endIndex);
+
+    songsToRender.forEach(song => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${song.number}</td>
+        <td>${song.name}</td>
+        <td class="text-center">
+          <button class="btn btn-success btn-sm" onclick="addToQueue('${song.number}', '${song.name.replace(/'/g, "\\'")}')">
+            <i class="fas fa-plus"></i> <!-- Font Awesome + icon -->
+          </button>
+        </td>
+      `;
+      fragment.appendChild(row);
+    });
+
+    songTable.appendChild(fragment);
+    loading = false;
+    loadingIndicator.style.display = 'none';
+  }
 
   function loadMoreSongs() {
     if (loading) return;
@@ -118,26 +115,20 @@ document.addEventListener('DOMContentLoaded', function () {
   window.addEventListener('scroll', loadMoreSongs);
 });
 
+// Queue functionality (same as before)
 let queue = []; // Holds the list of queued songs
 
 // Add a song to the queue
 function addToQueue(number, name) {
   // Prevent duplicates
   if (queue.some(song => song.number === number)) {
-    return; // Do nothing if the song is already in the queue
+    alert('This song is already in the queue!');
+    return;
   }
 
   // Add the song to the queue
   queue.push({ number, name });
   renderQueue();
-
-  // Disable the "Add" button for the song in the table
-  const addButton = document.querySelector(`#addButton-${number}`);
-  if (addButton) {
-    addButton.disabled = true;
-    addButton.classList.add('btn-secondary'); // Change to a grayed-out style
-    addButton.classList.remove('btn-success'); // Ensure it’s no longer green
-  }
 }
 
 // Render the queue to the table
@@ -163,17 +154,8 @@ function renderQueue() {
 
 // Remove a song from the queue
 function removeFromQueue(index) {
-  const song = queue[index];
   queue.splice(index, 1); // Remove the song by index
   renderQueue();
-
-  // Re-enable the "Add" button for the song that was removed
-  const addButton = document.querySelector(`#addButton-${song.number}`);
-  if (addButton) {
-    addButton.disabled = false;
-    addButton.classList.remove('btn-secondary');
-    addButton.classList.add('btn-success');
-  }
 }
 
 // Load the queue from localStorage on page load
@@ -183,22 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
     queue = savedQueue;
     renderQueue();
   }
-
-  // After loading the queue, update the "Add" buttons to match the current state
-  updateAddButtonsState();
 });
-
-// Function to update the state of "Add" buttons based on the queue
-function updateAddButtonsState() {
-  queue.forEach(song => {
-    const addButton = document.querySelector(`#addButton-${song.number}`);
-    if (addButton) {
-      addButton.disabled = true;
-      addButton.classList.add('btn-secondary');
-      addButton.classList.remove('btn-success');
-    }
-  });
-}
 
 function shareQueue(method) {
   const queue = JSON.parse(localStorage.getItem('karaokeQueue')) || [];
