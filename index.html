@@ -25,20 +25,17 @@
   <div class="sticky-search">
     <div class="search-bar">
       <div class="input-group">
-        <input class="form-control" id="searchInput" type="text" placeholder="Search for a song..." aria-label="Search for a song" oninput="searchSongs()">
-        <button class="btn btn-secondary" aria-label="Clear Search" onclick="clearSearch()">
+        <input class="form-control" id="searchInput" type="text" placeholder="Search for a song..." aria-label="Search for a song">
+        <button class="btn btn-secondary" aria-label="Clear Search" onclick="clearSearch()" title="Clear search">
           <i class="fas fa-times"></i>
         </button>
       </div>
-      <button class="btn btn-primary" aria-label="Search" onclick="searchSongs()">
-        <i class="fas fa-search"></i>
-      </button>
-      <button class="btn btn-primary" id="openQueueModal" aria-label="View Queue">
-        <i class="fas fa-list"></i>
+      <button class="btn btn-primary" id="openQueueModal" aria-label="View Queue" title="View your queue">
+        <i class="fas fa-list"></i> <span id="queueBadge" style="display: none; margin-left: 4px;" class="badge bg-danger">0</span>
       </button>
       <div class="dropdown">
-        <button class="btn btn-info dropdown-toggle" aria-label="Select Drive" id="driveToggle" data-bs-toggle="dropdown" aria-expanded="false">
-          <i class="fas fa-refresh"></i>
+        <button class="btn btn-info dropdown-toggle" aria-label="Select Drive" id="driveToggle" data-bs-toggle="dropdown" aria-expanded="false" title="Switch karaoke library">
+          <i class="fas fa-database"></i> <span id="driveName">Memory Card</span>
         </button>
         <ul class="dropdown-menu" aria-labelledby="driveToggle">
           <li><a class="dropdown-item" href="#" onclick="selectDrive('A')">Memory Card</a></li>
@@ -48,12 +45,14 @@
     </div>
   </div>
 
-  <table class="table table-bordered table-striped">
+  <div class="search-result-count" id="resultCount" style="display: none;"></div>
+
+  <table class="table">
     <thead>
       <tr>
         <th scope="col">#</th>
         <th scope="col" style="width:80%;">Song Name</th>
-        <th scope="col" style="width:auto;">List</th>
+        <th scope="col" style="width:auto; text-align: center;">Action</th>
       </tr>
     </thead>
     <tbody id="songTable" aria-live="polite">
@@ -61,39 +60,48 @@
     </tbody>
   </table>
 
-  <div class="loading" id="loading" style="display: none;" aria-live="polite">Loading more songs...</div>
+  <div class="loading" id="loading" style="display: none;" aria-live="polite">Loading more songs</div>
 
   <!-- Modal for Queue -->
   <div class="modal fade" id="queueModal" tabindex="-1" aria-labelledby="queueModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
-        <div class="modal-header" style="background-color: var(--primary-color); color: white;">
-          <h5 class="modal-title" id="queueModalLabel">Your List</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-header" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); color: white;">
+          <div>
+            <h5 class="modal-title" id="queueModalLabel">Your Karaoke Queue</h5>
+            <p style="margin: 0; font-size: 0.85rem; opacity: 0.9;" id="queueStats">Songs queued: 0</p>
+          </div>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <div class="dropdown mb-3">
-            <button class="btn btn-success dropdown-toggle" type="button" id="shareDropdown" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Share Your List">
-              Share Your List
+          <div class="d-flex gap-2 mb-3">
+            <button class="btn btn-success btn-sm" type="button" id="shareDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Share Your List">
+              <i class="fas fa-share-alt"></i> Share
             </button>
-            <ul class="dropdown-menu" aria-labelledby="shareDropdown">
-              <li><a class="dropdown-item" href="#" onclick="shareQueue('whatsapp')">WhatsApp</a></li>
-              <li><a class="dropdown-item" href="#" onclick="shareQueue('email')">Email</a></li>
+            <ul class="dropdown-menu" aria-labelledby="shareDropdownBtn">
+              <li><a class="dropdown-item" href="#" onclick="shareQueue('whatsapp')"><i class="fab fa-whatsapp"></i> WhatsApp</a></li>
+              <li><a class="dropdown-item" href="#" onclick="shareQueue('email')"><i class="fas fa-envelope"></i> Email</a></li>
             </ul>
+            <button class="btn btn-warning btn-sm" type="button" onclick="clearQueue()" aria-label="Clear entire queue" title="Clear all songs from queue">
+              <i class="fas fa-trash"></i> Clear Queue
+            </button>
           </div>
-          <table class="table table-bordered table-striped" id="queueTable">
+          <div id="queueEmpty" style="text-align: center; padding: 40px 20px; color: var(--text-secondary);">
+            <i class="fas fa-music" style="font-size: 3rem; margin-bottom: 10px; opacity: 0.5;"></i>
+            <p>Your queue is empty. Add songs from the list to get started!</p>
+          </div>
+          <table class="table" id="queueTable" style="display: none;">
             <thead>
               <tr>
-                <th scope="col">#</th>
+                <th scope="col" style="width: 50px; text-align: center;">#</th>
                 <th scope="col">Song Name</th>
-                <th scope="col">Actions</th>
+                <th scope="col" style="width: 100px; text-align: center;">Actions</th>
               </tr>
             </thead>
             <tbody>
               <!-- Queue items will be dynamically added here -->
             </tbody>
           </table>
-          
         </div>
       </div>
     </div>

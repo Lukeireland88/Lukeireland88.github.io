@@ -1,18 +1,21 @@
-// Cache to store filtered song lists per drive
 let cache = {};
+let searchTimeout;
 
 document.addEventListener('DOMContentLoaded', function () {
   const songTable = document.getElementById('songTable');
   const loadingIndicator = document.getElementById('loading');
+  const searchInput = document.getElementById('searchInput');
+  const resultCountEl = document.getElementById('resultCount');
   const batchSize = 1000;
   let currentIndex = 0;
   let loading = false;
   let filteredSongs = songList['A'];
   let currentDrive = 'A';
+  let isSearchActive = false;
 
-  // Function to handle drive selection from the dropdown
   window.selectDrive = function (drive) {
     currentDrive = drive;
+    document.getElementById('driveName').textContent = drive === 'A' ? 'Memory Card' : 'Main DB';
     changeDrive();
   };
 
@@ -25,6 +28,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     currentIndex = 0;
     songTable.innerHTML = '';
+    resultCountEl.style.display = 'none';
+    isSearchActive = false;
     renderBatch(currentIndex, currentIndex + batchSize);
     currentIndex += batchSize;
   };
@@ -39,8 +44,8 @@ document.addEventListener('DOMContentLoaded', function () {
         <td>${song.number}</td>
         <td>${song.name}</td>
         <td class="text-center">
-          <button class="btn btn-success btn-sm" onclick="addToQueue('${song.number}', '${song.name.replace(/'/g, "\\'")}')">
-            <i class="fas fa-plus"></i> <!-- Font Awesome + icon -->
+          <button class="btn btn-success btn-sm add-to-queue-btn" data-number="${song.number}" data-name="${song.name.replace(/"/g, '&quot;')}">
+            <i class="fas fa-plus"></i>
           </button>
         </td>
       `;
@@ -69,33 +74,54 @@ document.addEventListener('DOMContentLoaded', function () {
             renderBatch(currentIndex, nextIndex);
           }
           currentIndex = nextIndex;
-        }, 500);
+        }, 300);
       }
     } else {
       loadingIndicator.style.display = 'none';
     }
   }
 
-  window.searchSongs = function () {
-    const input = document.getElementById('searchInput').value.trim().toLowerCase();
-    const songTable = document.getElementById('songTable');
-    songTable.innerHTML = ''; // Clear the table
-
-    if (input.length === 1 && /^[a-z]$/.test(input)) {
-      // Filter by first letter
-      filteredSongs = songList[currentDrive].filter(song => song.name.toLowerCase().startsWith(input));
+  function updateResultCount(count) {
+    if (count === 0 && isSearchActive) {
+      resultCountEl.innerHTML = '<i class="fas fa-search"></i> No songs found. Try a different search.';
+      resultCountEl.style.display = 'block';
+    } else if (isSearchActive) {
+      resultCountEl.innerHTML = `<i class="fas fa-search"></i> Found ${count} song${count !== 1 ? 's' : ''}`;
+      resultCountEl.style.display = 'block';
     } else {
-      // General search
-      filteredSongs = songList[currentDrive].filter(song => song.name.toLowerCase().includes(input));
+      resultCountEl.style.display = 'none';
+    }
+  }
+
+  window.searchSongs = function () {
+    const input = searchInput.value.trim().toLowerCase();
+    songTable.innerHTML = '';
+
+    if (!input) {
+      isSearchActive = false;
+      resultCountEl.style.display = 'none';
+      filteredSongs = songList[currentDrive];
+    } else {
+      isSearchActive = true;
+      if (input.length === 1 && /^[a-z]$/.test(input)) {
+        filteredSongs = songList[currentDrive].filter(song => song.name.toLowerCase().startsWith(input));
+      } else {
+        filteredSongs = songList[currentDrive].filter(song => song.name.toLowerCase().includes(input));
+      }
+      updateResultCount(filteredSongs.length);
     }
 
     currentIndex = 0;
-    renderBatch(currentIndex, currentIndex + batchSize);
-    currentIndex += batchSize;
+    if (filteredSongs.length > 0) {
+      renderBatch(currentIndex, Math.min(currentIndex + batchSize, filteredSongs.length));
+      currentIndex += batchSize;
+    }
   };
 
   window.clearSearch = function () {
-    document.getElementById("searchInput").value = '';
+    searchInput.value = '';
+    isSearchActive = false;
+    resultCountEl.style.display = 'none';
     filteredSongs = songList[currentDrive];
     currentIndex = 0;
     songTable.innerHTML = '';
@@ -103,11 +129,19 @@ document.addEventListener('DOMContentLoaded', function () {
     currentIndex += batchSize;
   };
 
-  window.handleKeydown = function (event) {
-    if (event.key === 'Enter') {
-      searchSongs();
+  searchInput.addEventListener('input', () => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(searchSongs, 200);
+  });
+
+  songTable.addEventListener('click', (e) => {
+    const btn = e.target.closest('.add-to-queue-btn');
+    if (btn) {
+      const number = btn.dataset.number;
+      const name = btn.dataset.name;
+      addToQueue(number, name);
     }
-  };
+  });
 
   renderBatch(currentIndex, currentIndex + batchSize);
   currentIndex += batchSize;
@@ -115,83 +149,146 @@ document.addEventListener('DOMContentLoaded', function () {
   window.addEventListener('scroll', loadMoreSongs);
 });
 
-// Queue functionality (same as before)
-let queue = []; // Holds the list of queued songs
+let queue = [];
 
-// Add a song to the queue
+function updateQueueBadge() {
+  const badge = document.getElementById('queueBadge');
+  if (queue.length > 0) {
+    badge.textContent = queue.length;
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function updateQueueStats() {
+  const statsEl = document.getElementById('queueStats');
+  if (statsEl) {
+    statsEl.textContent = `Songs queued: ${queue.length}`;
+  }
+}
+
 function addToQueue(number, name) {
-  // Prevent duplicates
   if (queue.some(song => song.number === number)) {
-    alert('This song is already in the queue!');
+    showNotification('This song is already in the queue!', 'warning');
     return;
   }
 
-  // Add the song to the queue
   queue.push({ number, name });
-  renderQueue();
+  saveQueue();
+  showNotification('Added to queue!', 'success');
 }
 
-// Render the queue to the table
+function showNotification(message, type = 'success') {
+  const alertDiv = document.createElement('div');
+  alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+  alertDiv.setAttribute('role', 'alert');
+  alertDiv.innerHTML = `
+    ${message}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  `;
+  alertDiv.style.position = 'fixed';
+  alertDiv.style.top = '20px';
+  alertDiv.style.right = '20px';
+  alertDiv.style.maxWidth = '300px';
+  alertDiv.style.zIndex = '2000';
+
+  document.body.appendChild(alertDiv);
+
+  setTimeout(() => {
+    alertDiv.remove();
+  }, 3000);
+}
+
 function renderQueue() {
-  const queueTable = document.getElementById('queueTable').querySelector('tbody');
-  queueTable.innerHTML = ''; // Clear the current queue
+  const queueTable = document.getElementById('queueTable');
+  const queueEmpty = document.getElementById('queueEmpty');
+  const queueTableBody = queueTable.querySelector('tbody');
 
-  queue.forEach((song, index) => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>${song.number}</td>
-      <td>${song.name}</td>
-      <td>
-        <button class="btn btn-danger btn-sm" onclick="removeFromQueue(${index})">Remove</button>
-      </td>
-    `;
-    queueTable.appendChild(row);
-  });
+  if (queue.length === 0) {
+    queueTable.style.display = 'none';
+    queueEmpty.style.display = 'block';
+  } else {
+    queueTable.style.display = 'table';
+    queueEmpty.style.display = 'none';
 
-  // Save to localStorage
+    queueTableBody.innerHTML = '';
+    const fragment = document.createDocumentFragment();
+
+    queue.forEach((song, index) => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td style="text-align: center; font-weight: 600; color: var(--text-secondary);">${index + 1}</td>
+        <td><strong>${song.number}</strong> - ${song.name}</td>
+        <td style="text-align: center;">
+          <div class="queue-item-actions">
+            <button class="btn btn-sm btn-outline-danger" onclick="removeFromQueue(${index})" title="Remove from queue">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </td>
+      `;
+      fragment.appendChild(row);
+    });
+
+    queueTableBody.appendChild(fragment);
+  }
+
+  updateQueueBadge();
+  updateQueueStats();
+  saveQueue();
+}
+
+function removeFromQueue(index) {
+  const removedSong = queue[index];
+  queue.splice(index, 1);
+  renderQueue();
+  showNotification(`Removed "${removedSong.name}" from queue`, 'info');
+}
+
+window.clearQueue = function() {
+  if (queue.length === 0) return;
+  if (confirm('Are you sure you want to clear the entire queue?')) {
+    queue = [];
+    renderQueue();
+    showNotification('Queue cleared', 'info');
+  }
+};
+
+function saveQueue() {
   localStorage.setItem('karaokeQueue', JSON.stringify(queue));
 }
 
-// Remove a song from the queue
-function removeFromQueue(index) {
-  queue.splice(index, 1); // Remove the song by index
-  renderQueue();
-}
-
-// Load the queue from localStorage on page load
-document.addEventListener('DOMContentLoaded', () => {
+function loadQueue() {
   const savedQueue = JSON.parse(localStorage.getItem('karaokeQueue'));
-  if (savedQueue) {
+  if (savedQueue && Array.isArray(savedQueue)) {
     queue = savedQueue;
     renderQueue();
   }
-});
+}
 
 function shareQueue(method) {
-  const queue = JSON.parse(localStorage.getItem('karaokeQueue')) || [];
   if (queue.length === 0) {
-    alert('Your queue is empty!');
+    showNotification('Your queue is empty!', 'warning');
     return;
   }
 
-  // Include both song number and name in the shared list
   const queueText = queue.map((song, index) => `${index + 1}. [${song.number}] ${song.name}`).join('\n');
 
   if (method === 'whatsapp') {
-    const whatsappLink = `https://wa.me/?text=${encodeURIComponent('My Karaoke Queue:\n' + queueText)}`;
+    const whatsappLink = `https://wa.me/?text=${encodeURIComponent('My Karaoke Queue:\n\n' + queueText)}`;
     window.open(whatsappLink, '_blank');
   } else if (method === 'email') {
-    const emailLink = `mailto:?subject=My Karaoke Queue&body=${encodeURIComponent('My Karaoke Queue:\n' + queueText)}`;
+    const emailLink = `mailto:?subject=My Karaoke Queue&body=${encodeURIComponent('My Karaoke Queue:\n\n' + queueText)}`;
     window.location.href = emailLink;
   }
 }
 
-function clearQueue() {
-  queue = [];
-  renderQueue();
-}
+document.addEventListener('DOMContentLoaded', () => {
+  loadQueue();
 
-document.getElementById('openQueueModal').addEventListener('click', () => {
-  const queueModal = new bootstrap.Modal(document.getElementById('queueModal'));
-  queueModal.show();
+  document.getElementById('openQueueModal').addEventListener('click', () => {
+    const queueModal = new bootstrap.Modal(document.getElementById('queueModal'));
+    queueModal.show();
+  });
 });
