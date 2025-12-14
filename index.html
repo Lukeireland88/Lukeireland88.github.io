@@ -48,52 +48,39 @@
     </div>
   </div>
 
-  <table class="table table-bordered table-striped">
-    <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col" style="width:80%;">Song Name</th>
-        <th scope="col" style="width:auto;">List</th>
-      </tr>
-    </thead>
-    <tbody id="songTable" aria-live="polite">
-      <!-- The song list will be dynamically populated here -->
-    </tbody>
-  </table>
+  <div class="song-grid" id="songTable" aria-live="polite">
+    <!-- The song list will be dynamically populated here -->
+  </div>
 
   <div class="loading" id="loading" style="display: none;" aria-live="polite">Loading more songs...</div>
 
+  <!-- Toast Notification -->
+  <div id="toast" class="toast" role="alert" aria-live="assertive">
+    <i class="fas fa-check-circle"></i>
+    <span id="toast-message">Song added to your list!</span>
+  </div>
+
   <!-- Modal for Queue -->
   <div class="modal fade" id="queueModal" tabindex="-1" aria-labelledby="queueModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-scrollable">
       <div class="modal-content">
-        <div class="modal-header" style="background-color: var(--primary-color); color: white;">
+        <div class="modal-header">
           <h5 class="modal-title" id="queueModalLabel">Your List</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <div class="dropdown mb-3">
-            <button class="btn btn-success dropdown-toggle" type="button" id="shareDropdown" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Share Your List">
-              Share Your List
+          <div class="mb-3">
+            <button class="btn btn-share dropdown-toggle" type="button" id="shareDropdown" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Share Your List">
+              <i class="fas fa-share-alt"></i> Share Your List
             </button>
             <ul class="dropdown-menu" aria-labelledby="shareDropdown">
-              <li><a class="dropdown-item" href="#" onclick="shareQueue('whatsapp')">WhatsApp</a></li>
-              <li><a class="dropdown-item" href="#" onclick="shareQueue('email')">Email</a></li>
+              <li><a class="dropdown-item" href="#" onclick="shareQueue('whatsapp')"><i class="fab fa-whatsapp"></i> WhatsApp</a></li>
+              <li><a class="dropdown-item" href="#" onclick="shareQueue('email')"><i class="fas fa-envelope"></i> Email</a></li>
             </ul>
           </div>
-          <table class="table table-bordered table-striped" id="queueTable">
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">Song Name</th>
-                <th scope="col">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Queue items will be dynamically added here -->
-            </tbody>
-          </table>
-          
+          <div id="queueTable" class="queue-list">
+            <!-- Queue items will be dynamically added here -->
+          </div>
         </div>
       </div>
     </div>

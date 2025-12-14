@@ -34,17 +34,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const songsToRender = filteredSongs.slice(startIndex, endIndex);
 
     songsToRender.forEach(song => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${song.number}</td>
-        <td>${song.name}</td>
-        <td class="text-center">
-          <button class="btn btn-success btn-sm" onclick="addToQueue('${song.number}', '${song.name.replace(/'/g, "\\'")}')">
-            <i class="fas fa-plus"></i> <!-- Font Awesome + icon -->
-          </button>
-        </td>
+      const card = document.createElement('div');
+      card.className = 'song-card';
+      card.innerHTML = `
+        <div class="song-number">${song.number}</div>
+        <div class="song-name">${song.name}</div>
+        <button class="btn-add" onclick="addToQueueWithAnimation(event, '${song.number}', '${song.name.replace(/'/g, "\\'")}')">
+          <i class="fas fa-plus"></i>
+        </button>
       `;
-      fragment.appendChild(row);
+      fragment.appendChild(card);
     });
 
     songTable.appendChild(fragment);
@@ -118,37 +117,84 @@ document.addEventListener('DOMContentLoaded', function () {
 // Queue functionality (same as before)
 let queue = []; // Holds the list of queued songs
 
+// Add a song to the queue with animation
+function addToQueueWithAnimation(event, number, name) {
+  const button = event.target.closest('.btn-add');
+
+  // Add animation class
+  button.classList.add('added');
+
+  // Remove animation class after it completes
+  setTimeout(() => {
+    button.classList.remove('added');
+  }, 400);
+
+  // Call the original function
+  addToQueue(number, name);
+}
+
 // Add a song to the queue
 function addToQueue(number, name) {
   // Prevent duplicates
   if (queue.some(song => song.number === number)) {
-    alert('This song is already in the queue!');
+    showToast('This song is already in your list!', 'warning');
     return;
   }
 
   // Add the song to the queue
   queue.push({ number, name });
   renderQueue();
+
+  // Show success notification
+  showToast('Song added to your list!', 'success');
 }
 
-// Render the queue to the table
+// Show toast notification
+function showToast(message, type = 'success') {
+  const toast = document.getElementById('toast');
+  const toastMessage = document.getElementById('toast-message');
+
+  toastMessage.textContent = message;
+
+  // Change colors based on type
+  if (type === 'warning') {
+    toast.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+    toast.style.boxShadow = '0 8px 24px rgba(245, 158, 11, 0.4)';
+  } else {
+    toast.style.background = 'linear-gradient(135deg, var(--success-color), #059669)';
+    toast.style.boxShadow = '0 8px 24px rgba(16, 185, 129, 0.4)';
+  }
+
+  toast.classList.add('show');
+
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 2500);
+}
+
+// Render the queue to the list
 function renderQueue() {
-  const queueTable = document.getElementById('queueTable').querySelector('tbody');
-  queueTable.innerHTML = ''; // Clear the current queue
+  const queueContainer = document.getElementById('queueTable');
+  queueContainer.innerHTML = '';
+
+  if (queue.length === 0) {
+    queueContainer.innerHTML = '<div class="empty-queue">Your list is empty. Add some songs!</div>';
+    return;
+  }
 
   queue.forEach((song, index) => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>${song.number}</td>
-      <td>${song.name}</td>
-      <td>
-        <button class="btn btn-danger btn-sm" onclick="removeFromQueue(${index})">Remove</button>
-      </td>
+    const card = document.createElement('div');
+    card.className = 'queue-card';
+    card.innerHTML = `
+      <div class="queue-number">${song.number}</div>
+      <div class="queue-name">${song.name}</div>
+      <button class="btn-remove" onclick="removeFromQueue(${index})" aria-label="Remove song">
+        <i class="fas fa-times"></i>
+      </button>
     `;
-    queueTable.appendChild(row);
+    queueContainer.appendChild(card);
   });
 
-  // Save to localStorage
   localStorage.setItem('karaokeQueue', JSON.stringify(queue));
 }
 
