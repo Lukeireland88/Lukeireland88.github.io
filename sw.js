@@ -1,48 +1,48 @@
-// Cache name
-const CACHE_NAME = 'karaoke-app-cache-v1';
+const CACHE_NAME = 'karaoke-songbook-v2';
 
-// Files to cache
+// Shell assets only — songs.js is very large and is fetched at runtime.
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/styles.css',
-  '/script.js',
-  '/manifest.json',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png'
+  './',
+  './index.html',
+  './styles.css',
+  './app-logic.js',
+  './site.webmanifest',
+  './manifest.json',
+  './icons/icon-192x192.png',
+  './icons/icon-512x512.png'
 ];
 
-// Install service worker and cache resources
-self.addEventListener('install', event => {
+self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      console.log('Opened cache');
-      return cache.addAll(urlsToCache);
-    })
+    caches.open(CACHE_NAME).then((cache) =>
+      cache.addAll(urlsToCache).catch(() => {
+        /* Offline shell may partially fail; still activate */
+      })
+    )
   );
+  self.skipWaiting();
 });
 
-// Serve cached content when offline
-self.addEventListener('fetch', event => {
+self.addEventListener('fetch', (event) => {
+  if (event.request.method !== 'GET') return;
+
   event.respondWith(
-    caches.match(event.request).then(response => {
-      return response || fetch(event.request);
+    caches.match(event.request).then((cached) => {
+      if (cached) return cached;
+      return fetch(event.request).catch(() => cached || new Response('', { status: 503, statusText: 'Offline' }));
     })
   );
 });
 
-// Update the service worker and remove old caches
-self.addEventListener('activate', event => {
-  const cacheWhitelist = [CACHE_NAME];
+self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (!cacheWhitelist.includes(cacheName)) {
-            return caches.delete(cacheName);
-          }
+    caches.keys().then((cacheNames) =>
+      Promise.all(
+        cacheNames.map((name) => {
+          if (name !== CACHE_NAME) return caches.delete(name);
         })
-      );
-    })
+      )
+    )
   );
+  self.clients.claim();
 });
