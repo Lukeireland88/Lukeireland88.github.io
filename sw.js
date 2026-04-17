@@ -4,7 +4,7 @@
  *
  * When you need to wipe all stored shells (rare), bump CACHE_NAME below.
  */
-const CACHE_NAME = 'karaoke-songbook-v6';
+const CACHE_NAME = 'karaoke-songbook-v8';
 
 const urlsToCache = [
   './',

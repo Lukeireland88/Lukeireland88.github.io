@@ -757,6 +757,32 @@ body {
     padding: 0.75rem 1rem;
   }
 
+  /* Compact library control: icon + dropdown caret (no long label) */
+  .btn-library__summary {
+    display: none;
+  }
+
+  .btn-library {
+    max-width: none;
+    width: auto;
+    min-width: 56px;
+    height: 44px;
+    padding: 0 0.35rem 0 0.45rem !important;
+    gap: 0.2rem;
+    justify-content: center;
+  }
+
+  .search-bar .btn-library.dropdown-toggle::after {
+    display: inline-block;
+    flex-shrink: 0;
+    margin-inline-start: 0.05rem;
+    vertical-align: 0.12em;
+  }
+
+  .btn-library .fa-database {
+    margin: 0;
+  }
+
   .song-card {
     grid-template-columns: 56px 1fr auto;
     padding: 0.625rem 0.75rem;
