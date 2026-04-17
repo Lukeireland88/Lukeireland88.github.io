@@ -181,12 +181,22 @@ document.addEventListener('DOMContentLoaded', function () {
     clearQueue();
   });
 
+  const queueModalEl = document.getElementById('queueModal');
   const openQueueBtn = document.getElementById('openQueueModal');
+
+  /* Avoid focused controls staying inside the dialog when it gains aria-hidden (Bootstrap hide timing). */
+  if (queueModalEl) {
+    queueModalEl.addEventListener('hide.bs.modal', () => {
+      const ae = document.activeElement;
+      if (ae && queueModalEl.contains(ae) && typeof ae.blur === 'function') {
+        ae.blur();
+      }
+    });
+  }
+
   openQueueBtn.addEventListener('click', () => {
-    const el = document.getElementById('queueModal');
-    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-      const queueModal = new bootstrap.Modal(el);
-      queueModal.show();
+    if (queueModalEl && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+      bootstrap.Modal.getOrCreateInstance(queueModalEl).show();
     }
   });
 
