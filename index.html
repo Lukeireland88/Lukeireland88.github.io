@@ -77,16 +77,20 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <div class="queue-actions mb-3">
-            <div class="dropdown w-100">
-              <button class="btn btn-share dropdown-toggle w-100" type="button" id="shareDropdown" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Share your list">
+          <p class="queue-hint">Your list is stored in this browser so it survives refresh—use clear when you want to start over.</p>
+          <div class="queue-toolbar">
+            <div class="dropdown queue-toolbar__btn">
+              <button class="btn btn-queue-action btn-queue-action--share dropdown-toggle" type="button" id="shareDropdown" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Share your list">
                 <i class="fas fa-share-nodes" aria-hidden="true"></i> Share list
               </button>
-              <ul class="dropdown-menu w-100" aria-labelledby="shareDropdown">
+              <ul class="dropdown-menu dropdown-menu-end w-100" aria-labelledby="shareDropdown">
                 <li><button type="button" class="dropdown-item" data-share="whatsapp"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</button></li>
                 <li><button type="button" class="dropdown-item" data-share="email"><i class="fas fa-envelope" aria-hidden="true"></i> Email</button></li>
               </ul>
             </div>
+            <button type="button" class="btn btn-queue-action btn-queue-action--clear queue-toolbar__btn" id="clearQueueBtn" aria-label="Clear entire song list">
+              <i class="fas fa-trash-can" aria-hidden="true"></i> Clear list
+            </button>
           </div>
           <div id="queueTable" class="queue-list"></div>
         </div>

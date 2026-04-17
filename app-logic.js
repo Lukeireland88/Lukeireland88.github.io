@@ -177,6 +177,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
+  document.getElementById('clearQueueBtn').addEventListener('click', () => {
+    clearQueue();
+  });
+
   const openQueueBtn = document.getElementById('openQueueModal');
   openQueueBtn.addEventListener('click', () => {
     const el = document.getElementById('queueModal');
@@ -311,6 +315,17 @@ function renderQueue() {
 function removeFromQueue(index) {
   queue.splice(index, 1);
   renderQueue();
+}
+
+function clearQueue() {
+  queue = [];
+  try {
+    localStorage.removeItem('karaokeQueue');
+  } catch (_) {
+    /* ignore */
+  }
+  renderQueue();
+  showToast('List cleared.', 'success');
 }
 
 function shareQueue(method) {
