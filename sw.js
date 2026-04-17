@@ -1,6 +1,11 @@
-const CACHE_NAME = 'karaoke-songbook-v2';
+/**
+ * Network-first caching: after deploy, clients pick up new HTML/CSS/JS on refresh
+ * without needing a hard cache clear. Offline: falls back to last good copy in Cache Storage.
+ *
+ * When you need to wipe all stored shells (rare), bump CACHE_NAME below.
+ */
+const CACHE_NAME = 'karaoke-songbook-v3';
 
-// Shell assets only — songs.js is very large and is fetched at runtime.
 const urlsToCache = [
   './',
   './index.html',
@@ -13,24 +18,13 @@ const urlsToCache = [
 ];
 
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) =>
       cache.addAll(urlsToCache).catch(() => {
-        /* Offline shell may partially fail; still activate */
+        /* Precache is best-effort; fetch handler still works online */
       })
     )
-  );
-  self.skipWaiting();
-});
-
-self.addEventListener('fetch', (event) => {
-  if (event.request.method !== 'GET') return;
-
-  event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) return cached;
-      return fetch(event.request).catch(() => cached || new Response('', { status: 503, statusText: 'Offline' }));
-    })
   );
 });
 
@@ -46,3 +40,35 @@ self.addEventListener('activate', (event) => {
   );
   self.clients.claim();
 });
+
+self.addEventListener('fetch', (event) => {
+  if (event.request.method !== 'GET') return;
+
+  const url = new URL(event.request.url);
+  if (url.origin !== self.location.origin) {
+    /* CDNs, fonts: browser default caching */
+    return;
+  }
+
+  event.respondWith(networkFirstWithOfflineFallback(event.request));
+});
+
+async function networkFirstWithOfflineFallback(request) {
+  try {
+    const networkResponse = await fetch(request, {
+      cache: 'no-cache',
+      credentials: 'same-origin'
+    });
+
+    if (networkResponse && networkResponse.ok && networkResponse.type === 'basic') {
+      const copy = networkResponse.clone();
+      caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+    }
+
+    return networkResponse;
+  } catch {
+    const cached = await caches.match(request);
+    if (cached) return cached;
+    return new Response('', { status: 503, statusText: 'Offline' });
+  }
+}

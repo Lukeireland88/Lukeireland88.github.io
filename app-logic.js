@@ -222,7 +222,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js').catch(() => {});
+      navigator.serviceWorker
+        .register('sw.js')
+        .then((reg) => {
+          /* Ask for updates on each visit so new GitHub Pages deploys apply sooner */
+          reg.update();
+        })
+        .catch(() => {});
     });
   }
 });
