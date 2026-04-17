@@ -2,6 +2,11 @@
 const cache = {};
 let queue = [];
 
+/** Lowercase, drop spaces & punctuation so "simplyred" matches "Simply Red - ….mp3" */
+function normalizeForSearch(s) {
+  return s.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '');
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   const songTable = document.getElementById('songTable');
   const loadingIndicator = document.getElementById('loading');
@@ -108,17 +113,25 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   window.searchSongs = function () {
-    const input = searchInput.value.trim().toLowerCase();
+    const raw = searchInput.value.trim();
+    const lower = raw.toLowerCase();
     songTable.innerHTML = '';
 
-    if (input.length === 1 && /^[a-z]$/.test(input)) {
+    if (lower.length === 0) {
+      filteredSongs = songList[currentDrive];
+    } else if (lower.length === 1 && /^[a-z]$/.test(lower)) {
       filteredSongs = songList[currentDrive].filter((song) =>
-        song.name.toLowerCase().startsWith(input)
+        song.name.toLowerCase().startsWith(lower)
       );
     } else {
-      filteredSongs = songList[currentDrive].filter((song) =>
-        song.name.toLowerCase().includes(input)
-      );
+      const qNorm = normalizeForSearch(raw);
+      if (qNorm.length === 0) {
+        filteredSongs = songList[currentDrive];
+      } else {
+        filteredSongs = songList[currentDrive].filter((song) =>
+          normalizeForSearch(song.name).includes(qNorm)
+        );
+      }
     }
 
     currentIndex = 0;
