@@ -36,26 +36,50 @@
   </header>
 
   <div class="toolbar sticky-search">
-    <div class="toolbar__inner search-bar">
-      <div class="search-bar__field">
-        <label class="visually-hidden" for="searchInput">Search songs</label>
-        <input class="form-control search-input" id="searchInput" type="search" placeholder="Search by song name…" autocomplete="off" enterkeyhint="search" aria-label="Search for a song">
-      </div>
-      <button type="button" class="btn btn-primary btn-icon" id="searchBtn" aria-label="Search">
-        <i class="fas fa-search" aria-hidden="true"></i>
-      </button>
-      <button type="button" class="btn btn-primary btn-icon" id="openQueueModal" aria-label="Open your song list" aria-haspopup="dialog">
-        <i class="fas fa-list" aria-hidden="true"></i>
-      </button>
-      <div class="dropdown">
-        <button type="button" class="btn btn-outline-light btn-icon dropdown-toggle btn-source" id="driveToggle" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Song source">
+    <div class="toolbar__inner">
+      <div class="search-bar">
+        <div class="search-bar__scroll">
+          <div class="search-bar__field">
+            <label class="visually-hidden" for="searchInput">Search songs</label>
+            <input class="form-control search-input" id="searchInput" type="search" placeholder="Search by song name…" autocomplete="off" enterkeyhint="search" aria-label="Search for a song">
+          </div>
+          <button type="button" class="btn btn-primary btn-icon" id="searchBtn" aria-label="Search">
+            <i class="fas fa-search" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="btn btn-primary btn-icon" id="openQueueModal" aria-label="Open your song list" aria-haspopup="dialog">
+            <i class="fas fa-list" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="dropdown library-dropdown-wrap">
+        <button
+          type="button"
+          class="btn btn-outline-light btn-icon dropdown-toggle btn-library"
+          id="libraryMenuBtn"
+          data-bs-toggle="dropdown"
+          data-bs-auto-close="false"
+          aria-expanded="false"
+          aria-haspopup="true"
+          aria-controls="libraryMenu"
+          aria-label="Choose libraries"
+        >
           <i class="fas fa-database" aria-hidden="true"></i>
-          <span class="btn-source__label" id="driveLabel">Memory Card</span>
+          <span class="btn-library__summary" id="libraryMenuSummary">Memory card</span>
         </button>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="driveToggle">
-          <li><button type="button" class="dropdown-item" data-drive="A">Memory Card</button></li>
-          <li><button type="button" class="dropdown-item" data-drive="B">Main database</button></li>
+        <ul class="dropdown-menu dropdown-menu-end library-dropdown" id="libraryMenu" role="menu">
+          <li role="none">
+            <label class="library-dropdown__row">
+              <input type="checkbox" class="form-check-input" id="driveFilterA" checked />
+              <span>Memory card</span>
+            </label>
+          </li>
+          <li role="none">
+            <label class="library-dropdown__row">
+              <input type="checkbox" class="form-check-input" id="driveFilterB" />
+              <span>Main database</span>
+            </label>
+          </li>
         </ul>
+        </div>
       </div>
     </div>
   </div>

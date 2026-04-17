@@ -1,5 +1,5 @@
-// Cache filtered song lists per drive (same reference as songList until search runs)
-const cache = {};
+// Cached merged pools: keys "A", "B", "AB" (sorted by song number)
+const poolCache = {};
 let queue = [];
 
 /** Lowercase, drop spaces & punctuation so "simplyred" matches "Simply Red - ….mp3" */
@@ -11,42 +11,60 @@ document.addEventListener('DOMContentLoaded', function () {
   const songTable = document.getElementById('songTable');
   const loadingIndicator = document.getElementById('loading');
   const searchInput = document.getElementById('searchInput');
-  const driveLabel = document.getElementById('driveLabel');
+  const driveFilterA = document.getElementById('driveFilterA');
+  const driveFilterB = document.getElementById('driveFilterB');
+  const libraryMenuSummary = document.getElementById('libraryMenuSummary');
   const batchSize = 1000;
   let currentIndex = 0;
   let loading = false;
-  let filteredSongs = songList['A'];
-  let currentDrive = 'A';
+  let filteredSongs = [];
   let searchDebounceTimer = null;
 
   function setSongTableBusy(busy) {
     songTable.setAttribute('aria-busy', busy ? 'true' : 'false');
   }
 
-  function updateDriveLabel() {
-    if (driveLabel) {
-      driveLabel.textContent = currentDrive === 'A' ? 'Memory Card' : 'Main database';
+  /**
+   * Merges selected libraries (numbers are unique across A/B), sorted by song number.
+   * Empty array when neither library is checked.
+   */
+  function getSongPool() {
+    const useA = driveFilterA.checked;
+    const useB = driveFilterB.checked;
+    if (!useA && !useB) {
+      return [];
     }
+    const key = `${useA ? 'A' : ''}${useB ? 'B' : ''}`;
+    if (poolCache[key]) {
+      return poolCache[key];
+    }
+    const parts = [];
+    if (useA) parts.push(...songList['A']);
+    if (useB) parts.push(...songList['B']);
+    parts.sort((x, y) =>
+      String(x.number).localeCompare(String(y.number), undefined, {
+        numeric: true,
+        sensitivity: 'base'
+      })
+    );
+    poolCache[key] = parts;
+    return parts;
   }
 
-  window.selectDrive = function (drive) {
-    currentDrive = drive;
-    changeDrive();
-  };
-
-  window.changeDrive = function () {
-    if (cache[currentDrive]) {
-      filteredSongs = cache[currentDrive];
+  function updateLibrarySummary() {
+    if (!libraryMenuSummary) return;
+    const useA = driveFilterA.checked;
+    const useB = driveFilterB.checked;
+    if (useA && !useB) {
+      libraryMenuSummary.textContent = 'Memory card';
+    } else if (!useA && useB) {
+      libraryMenuSummary.textContent = 'Main database';
+    } else if (useA && useB) {
+      libraryMenuSummary.textContent = 'Both libraries';
     } else {
-      filteredSongs = songList[currentDrive];
-      cache[currentDrive] = filteredSongs;
+      libraryMenuSummary.textContent = 'None selected';
     }
-    currentIndex = 0;
-    songTable.innerHTML = '';
-    updateDriveLabel();
-    renderBatch(currentIndex, currentIndex + batchSize);
-    currentIndex += batchSize;
-  };
+  }
 
   function renderBatch(startIndex, endIndex) {
     setSongTableBusy(true);
@@ -115,20 +133,33 @@ document.addEventListener('DOMContentLoaded', function () {
   window.searchSongs = function () {
     const raw = searchInput.value.trim();
     const lower = raw.toLowerCase();
+    const pool = getSongPool();
     songTable.innerHTML = '';
+    updateLibrarySummary();
+
+    if (pool.length === 0) {
+      filteredSongs = [];
+      currentIndex = 0;
+      loadingIndicator.hidden = true;
+      const empty = document.createElement('div');
+      empty.className = 'empty-libraries';
+      empty.textContent =
+        'No library selected. Open the libraries menu and choose Memory card, Main database, or both.';
+      songTable.appendChild(empty);
+      setSongTableBusy(false);
+      return;
+    }
 
     if (lower.length === 0) {
-      filteredSongs = songList[currentDrive];
+      filteredSongs = pool;
     } else if (lower.length === 1 && /^[a-z]$/.test(lower)) {
-      filteredSongs = songList[currentDrive].filter((song) =>
-        song.name.toLowerCase().startsWith(lower)
-      );
+      filteredSongs = pool.filter((song) => song.name.toLowerCase().startsWith(lower));
     } else {
       const qNorm = normalizeForSearch(raw);
       if (qNorm.length === 0) {
-        filteredSongs = songList[currentDrive];
+        filteredSongs = pool;
       } else {
-        filteredSongs = songList[currentDrive].filter((song) =>
+        filteredSongs = pool.filter((song) =>
           normalizeForSearch(song.name).includes(qNorm)
         );
       }
@@ -163,12 +194,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
   document.getElementById('searchBtn').addEventListener('click', () => searchSongs());
 
-  document.querySelectorAll('[data-drive]').forEach((el) => {
-    el.addEventListener('click', () => {
-      const drive = el.getAttribute('data-drive');
-      if (drive) selectDrive(drive);
-    });
-  });
+  driveFilterA.addEventListener('change', () => searchSongs());
+  driveFilterB.addEventListener('change', () => searchSongs());
 
   document.querySelectorAll('[data-share]').forEach((el) => {
     el.addEventListener('click', () => {
@@ -200,8 +227,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  updateDriveLabel();
-
   try {
     const raw = localStorage.getItem('karaokeQueue');
     if (raw) {
@@ -215,8 +240,7 @@ document.addEventListener('DOMContentLoaded', function () {
     queue = [];
   }
 
-  renderBatch(currentIndex, currentIndex + batchSize);
-  currentIndex += batchSize;
+  searchSongs();
 
   window.addEventListener('scroll', loadMoreSongs, { passive: true });
 
