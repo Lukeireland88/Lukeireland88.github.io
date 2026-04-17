@@ -147,18 +147,20 @@ body {
   gap: 0.5rem;
 }
 
-.search-bar .input-group {
+/* Not using Bootstrap’s .input-group (it flattens corners when only one control is left) */
+.search-bar__field {
   flex: 1 1 200px;
   min-width: 0;
   display: flex;
   align-items: stretch;
 }
 
-.search-bar .form-control {
+.search-bar .search-input {
   flex: 1;
   min-width: 0;
+  width: 100%;
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   padding: 0.65rem 1rem;
   font-size: 1rem;
   background: var(--color-surface);
@@ -166,11 +168,11 @@ body {
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.search-bar .form-control::placeholder {
+.search-bar .search-input::placeholder {
   color: #94a3b8;
 }
 
-.search-bar .form-control:focus {
+.search-bar .search-input:focus {
   outline: none;
   border-color: var(--color-accent);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
