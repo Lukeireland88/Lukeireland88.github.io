@@ -1,6 +1,6 @@
 {
   "name": "Summerhouse Karaoke",
-  "short_name": "SHKaraoke",
+  "short_name": "Karaoke Songbook",
   "description": "A searchable list of karaoke songs.",
   "start_url": "/",
   "display": "standalone",
