@@ -243,19 +243,24 @@ document.addEventListener('DOMContentLoaded', function () {
   searchSongs();
 
   window.addEventListener('scroll', loadMoreSongs, { passive: true });
-
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker
-        .register('sw.js')
-        .then((reg) => {
-          /* Ask for updates on each visit so new GitHub Pages deploys apply sooner */
-          reg.update();
-        })
-        .catch(() => {});
-    });
-  }
 });
+
+if ('serviceWorker' in navigator) {
+  const hadControllerAtPageLoad = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (hadControllerAtPageLoad) {
+      window.location.reload();
+    }
+  });
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('sw.js', { updateViaCache: 'none' })
+      .then((reg) => {
+        reg.update();
+      })
+      .catch(() => {});
+  });
+}
 
 function addToQueueWithAnimation(event, number, name) {
   const button = event.target.closest('.btn-add');

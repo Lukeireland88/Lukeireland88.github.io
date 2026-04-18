@@ -2,15 +2,16 @@
  * Network-first caching: after deploy, clients pick up new HTML/CSS/JS on refresh
  * without needing a hard cache clear. Offline: falls back to last good copy in Cache Storage.
  *
- * When you need to wipe all stored shells (rare), bump CACHE_NAME below.
+ * After each deploy that changes HTML/CSS/JS, bump CACHE_NAME and the ?v= on
+ * asset URLs in index.html so clients drop old cached copies quickly.
  */
-const CACHE_NAME = 'karaoke-songbook-v8';
+const CACHE_NAME = 'karaoke-songbook-v9';
 
 const urlsToCache = [
   './',
   './index.html',
-  './styles.css',
-  './app-logic.js',
+  './styles.css?v=9',
+  './app-logic.js?v=9',
   './site.webmanifest',
   './manifest.json',
   './icons/icon-192x192.png',
