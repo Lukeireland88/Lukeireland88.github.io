@@ -7,34 +7,10 @@ function normalizeForSearch(s) {
   return s.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '');
 }
 
-const MAX_SEARCH_SUGGESTIONS = 10;
-
-/** Same matching rules as the main song grid (`searchSongs`). */
-function filterSongPool(pool, raw) {
-  const trimmed = typeof raw === 'string' ? raw.trim() : '';
-  const lower = trimmed.toLowerCase();
-  if (pool.length === 0) {
-    return [];
-  }
-  if (lower.length === 0) {
-    return pool;
-  }
-  if (lower.length === 1 && /^[a-z]$/.test(lower)) {
-    return pool.filter((song) => song.name.toLowerCase().startsWith(lower));
-  }
-  const qNorm = normalizeForSearch(trimmed);
-  if (qNorm.length === 0) {
-    return pool;
-  }
-  return pool.filter((song) => normalizeForSearch(song.name).includes(qNorm));
-}
-
 document.addEventListener('DOMContentLoaded', function () {
   const songTable = document.getElementById('songTable');
   const loadingIndicator = document.getElementById('loading');
   const searchInput = document.getElementById('searchInput');
-  const suggestionsEl = document.getElementById('searchSuggestionsList');
-  const searchCombobox = document.getElementById('searchCombobox');
   const driveFilterA = document.getElementById('driveFilterA');
   const driveFilterB = document.getElementById('driveFilterB');
   const libraryMenuSummary = document.getElementById('libraryMenuSummary');
@@ -43,128 +19,6 @@ document.addEventListener('DOMContentLoaded', function () {
   let loading = false;
   let filteredSongs = [];
   let searchDebounceTimer = null;
-  let activeSuggestionIndex = -1;
-
-  function hideSuggestions() {
-    if (!suggestionsEl) return;
-    suggestionsEl.hidden = true;
-    suggestionsEl.innerHTML = '';
-    searchInput.setAttribute('aria-expanded', 'false');
-    searchInput.removeAttribute('aria-activedescendant');
-    activeSuggestionIndex = -1;
-  }
-
-  function setActiveSuggestionByIndex(index, items) {
-    activeSuggestionIndex = index;
-    items.forEach((el, i) => {
-      el.classList.toggle('search-suggestions__item--active', i === index);
-    });
-    const active = items[index];
-    if (active && active.id) {
-      searchInput.setAttribute('aria-activedescendant', active.id);
-    } else {
-      searchInput.removeAttribute('aria-activedescendant');
-    }
-    if (active && typeof active.scrollIntoView === 'function') {
-      active.scrollIntoView({ block: 'nearest' });
-    }
-  }
-
-  function moveActiveSuggestion(delta) {
-    if (!suggestionsEl) return;
-    const items = suggestionsEl.querySelectorAll(
-      '.search-suggestions__item:not(.search-suggestions__item--empty)'
-    );
-    if (!items.length) return;
-    let next;
-    if (activeSuggestionIndex < 0) {
-      next = delta > 0 ? 0 : items.length - 1;
-    } else {
-      next = activeSuggestionIndex + delta;
-      if (next < 0) next = items.length - 1;
-      if (next >= items.length) next = 0;
-    }
-    setActiveSuggestionByIndex(next, items);
-  }
-
-  function applySuggestion(row) {
-    if (row.dataset.noSelect) return;
-    const name = row.dataset.name;
-    if (name == null) return;
-    searchInput.value = name;
-    hideSuggestions();
-    searchSongs();
-  }
-
-  function renderSuggestionOptions(matches) {
-    if (!suggestionsEl) return;
-    suggestionsEl.innerHTML = '';
-    activeSuggestionIndex = -1;
-    searchInput.removeAttribute('aria-activedescendant');
-
-    if (matches.length === 0) {
-      const row = document.createElement('div');
-      row.className = 'search-suggestions__item search-suggestions__item--empty';
-      row.setAttribute('role', 'option');
-      row.id = 'search-suggestion-empty';
-      row.dataset.noSelect = '1';
-      row.textContent = 'No matching songs';
-      suggestionsEl.appendChild(row);
-      suggestionsEl.hidden = false;
-      searchInput.setAttribute('aria-expanded', 'true');
-      return;
-    }
-
-    const slice = matches.slice(0, MAX_SEARCH_SUGGESTIONS);
-    slice.forEach((song, i) => {
-      const row = document.createElement('div');
-      row.className = 'search-suggestions__item';
-      row.setAttribute('role', 'option');
-      row.id = `search-suggestion-${i}`;
-      row.dataset.number = String(song.number);
-      row.dataset.name = song.name;
-      const num = document.createElement('span');
-      num.className = 'search-suggestions__num';
-      num.textContent = song.number;
-      const nameEl = document.createElement('span');
-      nameEl.className = 'search-suggestions__name';
-      nameEl.textContent = song.name;
-      row.appendChild(num);
-      row.appendChild(nameEl);
-      row.addEventListener('click', () => applySuggestion(row));
-      suggestionsEl.appendChild(row);
-    });
-    suggestionsEl.hidden = false;
-    searchInput.setAttribute('aria-expanded', 'true');
-  }
-
-  function updateSuggestionsUI() {
-    if (!suggestionsEl) return;
-    const pool = getSongPool();
-    const raw = searchInput.value;
-    if (!pool.length || !raw.trim()) {
-      hideSuggestions();
-      return;
-    }
-    const matches = filterSongPool(pool, raw);
-    renderSuggestionOptions(matches);
-  }
-
-  function openSuggestionsFromKeyboard() {
-    if (!suggestionsEl) return;
-    const pool = getSongPool();
-    if (!pool.length) return;
-    const raw = searchInput.value;
-    if (!raw.trim()) return;
-    const matches = filterSongPool(pool, raw);
-    renderSuggestionOptions(matches);
-    const items = suggestionsEl.querySelectorAll(
-      '.search-suggestions__item:not(.search-suggestions__item--empty)'
-    );
-    if (items.length) {
-      setActiveSuggestionByIndex(0, items);
-    }
-  }
 
   function setSongTableBusy(busy) {
     songTable.setAttribute('aria-busy', busy ? 'true' : 'false');
@@ -277,6 +131,8 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   window.searchSongs = function () {
+    const raw = searchInput.value.trim();
+    const lower = raw.toLowerCase();
     const pool = getSongPool();
     songTable.innerHTML = '';
     updateLibrarySummary();
@@ -294,7 +150,20 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
 
-    filteredSongs = filterSongPool(pool, searchInput.value);
+    if (lower.length === 0) {
+      filteredSongs = pool;
+    } else if (lower.length === 1 && /^[a-z]$/.test(lower)) {
+      filteredSongs = pool.filter((song) => song.name.toLowerCase().startsWith(lower));
+    } else {
+      const qNorm = normalizeForSearch(raw);
+      if (qNorm.length === 0) {
+        filteredSongs = pool;
+      } else {
+        filteredSongs = pool.filter((song) =>
+          normalizeForSearch(song.name).includes(qNorm)
+        );
+      }
+    }
 
     currentIndex = 0;
     renderBatch(currentIndex, currentIndex + batchSize);
@@ -311,96 +180,22 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  if (suggestionsEl) {
-    suggestionsEl.addEventListener('mousedown', (e) => {
-      e.preventDefault();
-    });
-  }
-
   searchInput.addEventListener('input', () => {
     window.clearTimeout(searchDebounceTimer);
-    searchDebounceTimer = window.setTimeout(() => {
-      searchSongs();
-      updateSuggestionsUI();
-    }, 200);
+    searchDebounceTimer = window.setTimeout(() => searchSongs(), 200);
   });
-
   searchInput.addEventListener('keydown', (event) => {
-    if (!suggestionsEl) {
-      if (event.key === 'Enter') {
-        event.preventDefault();
-        window.clearTimeout(searchDebounceTimer);
-        searchSongs();
-      }
-      return;
-    }
-
-    if (event.key === 'Escape') {
-      if (!suggestionsEl.hidden) {
-        event.preventDefault();
-        hideSuggestions();
-      }
-      return;
-    }
-
-    if (event.key === 'ArrowDown') {
-      if (suggestionsEl.hidden) {
-        event.preventDefault();
-        openSuggestionsFromKeyboard();
-      } else {
-        event.preventDefault();
-        moveActiveSuggestion(1);
-      }
-      return;
-    }
-
-    if (event.key === 'ArrowUp') {
-      if (!suggestionsEl.hidden) {
-        event.preventDefault();
-        moveActiveSuggestion(-1);
-      }
-      return;
-    }
-
     if (event.key === 'Enter') {
-      const items = suggestionsEl.querySelectorAll(
-        '.search-suggestions__item:not(.search-suggestions__item--empty)'
-      );
-      if (
-        !suggestionsEl.hidden &&
-        activeSuggestionIndex >= 0 &&
-        items[activeSuggestionIndex]
-      ) {
-        event.preventDefault();
-        applySuggestion(items[activeSuggestionIndex]);
-        return;
-      }
       event.preventDefault();
       window.clearTimeout(searchDebounceTimer);
       searchSongs();
-      updateSuggestionsUI();
     }
   });
 
-  document.addEventListener('click', (e) => {
-    if (searchCombobox && !searchCombobox.contains(e.target)) {
-      hideSuggestions();
-    }
-  });
+  document.getElementById('searchBtn').addEventListener('click', () => searchSongs());
 
-  document.getElementById('searchBtn').addEventListener('click', () => {
-    hideSuggestions();
-    searchSongs();
-  });
-
-  driveFilterA.addEventListener('change', () => {
-    searchSongs();
-    updateSuggestionsUI();
-  });
-  driveFilterB.addEventListener('change', () => {
-    searchSongs();
-    updateSuggestionsUI();
-  });
+  driveFilterA.addEventListener('change', () => searchSongs());
+  driveFilterB.addEventListener('change', () => searchSongs());
 
   document.querySelectorAll('[data-share]').forEach((el) => {
     el.addEventListener('click', () => {
