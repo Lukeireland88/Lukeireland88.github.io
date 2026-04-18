@@ -5,13 +5,13 @@
  * After each deploy that changes HTML/CSS/JS, bump CACHE_NAME and the ?v= on
  * asset URLs in index.html so clients drop old cached copies quickly.
  */
-const CACHE_NAME = 'karaoke-songbook-v9';
+const CACHE_NAME = 'karaoke-songbook-v10';
 
 const urlsToCache = [
   './',
   './index.html',
-  './styles.css?v=9',
-  './app-logic.js?v=9',
+  './styles.css?v=10',
+  './app-logic.js?v=10',
   './site.webmanifest',
   './manifest.json',
   './icons/icon-192x192.png',
