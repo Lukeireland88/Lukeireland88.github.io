@@ -1,21 +1,26 @@
 {
+  "id": "/",
   "name": "Summerhouse Karaoke",
-  "short_name": "Karaoke Songbook",
-  "description": "A searchable list of karaoke songs.",
+  "short_name": "Karaoke",
+  "description": "Browse and search songs from our karaoke machine.",
+  "lang": "en",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#02011A",
   "theme_color": "#0f172a",
   "icons": [
     {
-      "src": "icons/icon-192x192.png",
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
       "type": "image/png",
-      "sizes": "192x192"
+      "purpose": "any"
     },
     {
-      "src": "icons/icon-512x512.png",
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
       "type": "image/png",
-      "sizes": "512x512"
+      "purpose": "any"
     }
   ]
 }
